@@ -1,6 +1,6 @@
 Column number,If needed,Type/import,Label,pl,uk,no,uk2,,
-1,yes,character,ID,ID,ID,ID,ID,,"wolę zostawić, gdyby w trakcie analizy nastąpił jakiś problem i trzeba by było upewnić się, że to ten sam wpis"
-2,yes,%Y-%m-%d,submission_date,Submit.date,Submit.date,Submit.date,Submit.date,,
+1,,character,ID,ID,ID,ID,ID,,
+2,yes,%Y-%m-%d %H:%M:%S,submission_pabiq,Submit.date,Submit.date,Submit.date,Submit.date,,
 3,,character,sb_ip,Submitter.s.IP,Submitter.s.IP,Submitter.s.IP,Submitter.s.IP,,
 4,,,sb_username,Submitter.s.Username,Submitter.s.Username,Submitter.s.Username,Submitter.s.Username,,do wyrzucenia
 5,,,sb_email,Submitter.s.Email.Address,Submitter.s.Email.Address,Submitter.s.Email.Address,Submitter.s.Email.Address,,do wyrzucenia
@@ -12,7 +12,7 @@ Column number,If needed,Type/import,Label,pl,uk,no,uk2,,
 11,yes,,country,Kraj.zamieszkania.dziecka.,Країна.проживання.дитини.,Bostedsland.,Країна.проживання.дитини.,,
 12,yes,,region,Województwo.Region.zamieszkania.dziecka.,Область..район.проживання.дитини.,Bostedsfylke.,Область..район.проживання.дитини.,,
 13,,,city,Miejscowość.zamieszkania.dziecka.,Місцевість.проживання.дитини.,Bosted.,Місцевість.проживання.дитини.,,
-14,yes,,village_city,Typ.miejscowości.zamieszkania.dziecka.,Тип.місцевості.,Bostedskategori.,Тип.місцевості.,,
+14,yes,,city_town_countryside,Typ.miejscowości.zamieszkania.dziecka.,Тип.місцевості.,Bostedskategori.,Тип.місцевості.,,
 15,yes,logical,is_same_country,Czy.dziecko.mieszka.w.kraju..w.którym.się.urodziło.,Чи.дитина.проживає.в.країні..в.якій.народилася.,Er.barnet.bosatt.i.landet.det.ble.født.i.,Чи.дитина.проживає.в.країні..в.якій.народилася.,,
 16,yes,,birth_country,Kraj.urodzenia.dziecka.,Країна.народження.дитини.,Fødested..land..,Країна.народження.дитини.,,
 17,,,region_birth,Województwo.Region.urodzenia.dziecka.,Область..район.народження.дитини.,Fødested..fylke..,Область..район.народження.дитини.,,

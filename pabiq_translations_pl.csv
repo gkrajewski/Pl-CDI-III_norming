@@ -3,9 +3,9 @@ mother,matka,мати,mor,,"TAK i HI są podwojone - raz po polsku, raz po ukrai
 father,ojciec,батько,far,,niektóre wyrażania (np. Wybierz język) pojawiają się w ukraińskim PABIQ po polsku
 grandmother,babcia,бабуся,bestemor,,
 grandfather,dziadek,дідусь,bestefar,,
-village,wieś,село,ikke i by,,
-small_city,małe miasto (poniżej 100 000 mieszkańców),мале місто (менше 100 000 мешканців),i en mindre by (under 100 000 innbyggere),,
-large_city,duże miasto (co najmniej 100 000 mieszkańców),велике місто (що найменше 100 000 мешканців),i en større by (minst 100 000 innbyggere),,
+wieś,wieś,село,ikke i by,,
+małe miasto,małe miasto (poniżej 100 000 mieszkańców),мале місто (менше 100 000 мешканців),i en mindre by (under 100 000 innbyggere),,
+duże miasto,duże miasto (co najmniej 100 000 mieszkańców),велике місто (що найменше 100 000 мешканців),i en større by (minst 100 000 innbyggere),,
 TRUE,TAK,ТАК,JA,,
 FALSE,NIE,НІ,NEI,,
 yes,,TAK,,,

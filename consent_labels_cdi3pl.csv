@@ -1,0 +1,5 @@
+pl,Label,If needed,Type/import
+Submit.date,submission_consent,yes,%Y-%m-%d %H:%M:%S
+info_source,info_source,yes
+preschool,preschool,yes
+X_id,id,yes,character
