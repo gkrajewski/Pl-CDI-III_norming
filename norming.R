@@ -1,13 +1,16 @@
 library(tidyverse)
-library(data.table) # to change column names with setnames()
 library(scales) # for time in X axis (duration histograms)
 library(Multilada)
-source("fm_read.R")
 
+export_date <- "20240411"
 
 # PABIQ processing:
 
-pabiq_data <- fm_read("PABIQSCRPL_20240112.csv", "pabiq_labels_cdi3pl.csv", "pabiq_translations_pl.csv", "pl")
+# To prepare import uncomment:
+# fm_variables(paste0("PABIQSCRPL_", export_date, ".csv"), lang = "pl", target_file = "pabiq_labels_cdi3pl.csv")
+
+pabiq_data <- fm_read(paste0("PABIQSCRPL_", export_date, ".csv"),
+                      "pabiq_labels_cdi3pl.csv", "pabiq_translations_cdi3pl.csv", "pl")
 
 #CLT database mailing was on 2023-09-05
 pabiq_data %>% filter(submission_pabiq > "2023-09-04") -> pabiq_data
@@ -62,8 +65,8 @@ pabiq_data %>% filter(! id %in% fake_voivodeship$id) -> pabiq_data
 
 #Inconsistent education:
 pabiq_data %>% group_by(id) %>%
-  reframe(n = n_distinct(guardian1_ed), submission_date = submission_pabiq, id = id,
-          guardian1_relation = guardian1_relation, guardian1_ed = guardian1_ed) %>%
+  reframe(n = n_distinct(caregiver1_ed), submission_date = submission_pabiq, id = id,
+          caregiver1_relation = caregiver1_relation, caregiver1_ed = caregiver1_ed) %>%
   filter(n > 1) -> fake_education
 pabiq_data %>% filter(! id %in% fake_education$id) -> pabiq_data
 
@@ -77,7 +80,7 @@ pabiq_data %>% filter(! id %in% fake_siblings$id) -> pabiq_data
 #Left-overs:
 pabiq_data %>% group_by(id) %>%
   reframe(n = n(), id = id, submission_date = submission_pabiq, birth_date = birth_date,
-          age = age, sex = sex, voivodeship = voivodeship, guardian1_ed = guardian1_ed) %>%
+          age = age, sex = sex, voivodeship = voivodeship, caregiver1_ed = caregiver1_ed) %>%
   filter(n > 1) -> left_overs
 
 # Nie można CDI wypełnić dwa razy z tego samego IP.
@@ -99,17 +102,17 @@ cdi_read("cdi", "cdi3-scr_pl") %>% filter(id %in% pabiq_data$id) -> cdi_response
 #Empty alternatives filtering
 empty_alternatives <- cdi_count_checkboxAlt(cdi_responses, "alternatives", answer = "none") %>%
   mutate(empty_alt = n == 16) %>% filter(empty_alt) %>% select(id)
-# Na razie cztery takie wypełnienia, ale odpowiedzi w pabiqu sugerują
-# rzetelność dwóch pierwszych:
-cdi_responses %>% filter(! id %in% empty_alternatives[3:4, "id"]) -> cdi_responses
+# Dziewięć takich wypełnień, ale odpowiedzi w pabiqu sugerują
+# rzetelność dwóch pierwszych (jeszcze do sprawdzenia kiedyś):
+cdi_responses %>% filter(! id %in% empty_alternatives[3:nrow(empty_alternatives), "id"]) -> cdi_responses
 
 cdi_submissions(cdi_responses) %>%
   left_join(pabiq_data) -> data
 
 # data %>% mutate(submission_pabiq = submission_pabiq - hours(2)) ->  # The two servers have time difference...
 #   data
-data %>% mutate(gap_pabiq = start - submission_pabiq) -> data
-data %>% group_by(id) %>% reframe(submission_date = submission_pabiq, start, gap_pabiq, n = n()) %>%
+data %>% mutate(gap_pabiq = start_date - submission_pabiq) -> data
+data %>% group_by(id) %>% reframe(submission_date = submission_pabiq, start_date, gap_pabiq, n = n()) %>%
   filter(n > 1) %>% select(! n) -> multiple_pabiqs
 
 data %>% group_by(id) %>% filter(gap_pabiq == min(abs(gap_pabiq))) -> data
@@ -123,7 +126,12 @@ left_join(data, cdi_count_radio(cdi_responses, "yesNo")) %>%
 
 
 # Consent form processing:
-consent_data <- fm_read("IRMIK3_20240123.csv", "consent_labels_cdi3pl.csv", lang = "pl")
+
+# To prepare import uncomment:
+# fm_variables(paste0("IRMIK3_", export_date, ".csv"), lang = "pl", target_file = "consent_labels_cdi3pl.csv")
+
+consent_data <- fm_read(paste0("IRMIK3_", export_date, ".csv"),
+                        "consent_labels_cdi3pl.csv", lang = "pl")
 inner_join(data, consent_data) -> data
 data %>% mutate(gap_consent = submission_pabiq - submission_consent) -> data
 data %>% group_by(id) %>% reframe(submission_consent, submission_pabiq, gap_consent,
@@ -135,7 +143,7 @@ data %>% group_by(id) %>%
   filter(gap_consent == min(gap_consent)) -> data
 
 # Obvious test submissions:
-data %>% filter(guardian1_relation != "Test Karo") -> data
+data %>% filter(caregiver1_relation != "Test Karo") -> data
 
 # Filling time histogram:
 data %>% ggplot() +
@@ -158,14 +166,14 @@ fct_collapse(data$voivodeship,
 ) -> data$macroregion
 
 # W poniższym potwierdzić klasyfikację (głównie "zawodowe"):
-fct_collapse(data$guardian1_ed,
+fct_collapse(data$caregiver1_ed,
              "podstawowe" = c("podstawowe", "zawodowe"),
              "średnie" = c("średnie", "niepełne wyższe"),
              "wyższe" = c("wyższe", "doktorat")
-) -> data$guardian1_ed
+) -> data$caregiver1_ed
 
 capture.output(
-  table(data$guardian1_ed, data$city_town_countryside, data$macroregion),
+  table(data$caregiver1_ed, data$city_town_countryside, data$macroregion),
   file = "cdi3_norm_counts.txt")
 
 ## POWYŻEJ ZAKOŃCZYŁEM

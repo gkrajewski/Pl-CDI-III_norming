@@ -1,5 +1,6 @@
-pl,Label,If needed,Type/import
-Submit.date,submission_consent,yes,%Y-%m-%d %H:%M:%S
-info_source,info_source,yes
-preschool,preschool,yes
-X_id,id,yes,character
+Import,Label,Type,pl
+yes,submission_consent,%Y-%m-%d %H:%M:%S,Submit date
+,,,Submitter's IP
+yes,id,,_id
+yes,info_source,,info_source
+yes,preschool,,preschool

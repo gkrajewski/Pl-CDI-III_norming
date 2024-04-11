@@ -1,111 +1,107 @@
-Column number,If needed,Type/import,Label,pl,uk,no,uk2,,
-1,,character,ID,ID,ID,ID,ID,,
-2,yes,%Y-%m-%d %H:%M:%S,submission_pabiq,Submit.date,Submit.date,Submit.date,Submit.date,,
-3,,character,sb_ip,Submitter.s.IP,Submitter.s.IP,Submitter.s.IP,Submitter.s.IP,,
-4,,,sb_username,Submitter.s.Username,Submitter.s.Username,Submitter.s.Username,Submitter.s.Username,,do wyrzucenia
-5,,,sb_email,Submitter.s.Email.Address,Submitter.s.Email.Address,Submitter.s.Email.Address,Submitter.s.Email.Address,,do wyrzucenia
-6,yes,character,id,X_id,X_id,X_id,X_id,,
-7,,,form_group,form_group,form_group,,form_group,,
-8,yes,,guardian1_relation,Kim.jest.Pani.Pan.dla.dziecka.,Ким.Ви.є.для.вашої.дитини.,Hva.er.din.relasjon.til.barnet.,Ким.Ви.є.для.вашої.дитини.,,
-9,yes,%d-%m-%Y,birth_date,Data.urodzenia.dziecka.,Дата.народження.дитини.,Fødselsdato.,Дата.народження.дитини.,,
-10,yes,integer,age_years,Wiek.dziecka..liczba.skończonych.lat..,Вік.дитини..кількусть.повних.років.,Barnets.alder..i.antall.fylte.år..,Вік.дитини..кількість.повних.років.,,
-11,yes,,country,Kraj.zamieszkania.dziecka.,Країна.проживання.дитини.,Bostedsland.,Країна.проживання.дитини.,,
-12,yes,,region,Województwo.Region.zamieszkania.dziecka.,Область..район.проживання.дитини.,Bostedsfylke.,Область..район.проживання.дитини.,,
-13,,,city,Miejscowość.zamieszkania.dziecka.,Місцевість.проживання.дитини.,Bosted.,Місцевість.проживання.дитини.,,
-14,yes,,city_town_countryside,Typ.miejscowości.zamieszkania.dziecka.,Тип.місцевості.,Bostedskategori.,Тип.місцевості.,,
-15,yes,logical,is_same_country,Czy.dziecko.mieszka.w.kraju..w.którym.się.urodziło.,Чи.дитина.проживає.в.країні..в.якій.народилася.,Er.barnet.bosatt.i.landet.det.ble.født.i.,Чи.дитина.проживає.в.країні..в.якій.народилася.,,
-16,yes,,birth_country,Kraj.urodzenia.dziecka.,Країна.народження.дитини.,Fødested..land..,Країна.народження.дитини.,,
-17,,,region_birth,Województwo.Region.urodzenia.dziecka.,Область..район.народження.дитини.,Fødested..fylke..,Область..район.народження.дитини.,,
-18,,,city_birth,Miejscowość.urodzenia.dziecka.,Місцевість.народження.дитини.,Fødested..kommune..,Місцевість.народження.дитини.,,
-19,,%d-%m-%Y,isc_when_old,Od.kiedy.dziecko.mieszka.w.obecnym.kraju.zamieszkania.,З.якого.часу.дитина.проживає.в.даній..теперішній..поточній..країні.,Angi.dato.for.ankomst.til.bostedsland.,З.якого.часу.дитина.проживає.в.даній..теперішній..поточній..країні.,,
-20,yes,,sex,Płeć.dziecka.,Стать.дитини.,Barnets.kjønn.,Стать.дитини.,,
-21,,integer,child_number_house,Ile.dzieci.mieszka.w.tym.samym.gospodarstwie.domowym.co.dziecko..którego.dotyczy.kwestionariusz.,Скільки.дітей.проживає.в.одному.домогосподарстві.з.дитиною..якої.стосується.анкета.,Hvor.mange.barn.bor.i.samme.husholdning.som.barnet.som.skjemaet.dreier.seg.om.,Скільки.дітей.проживає.в.одному.домогосподарстві.з.дитиною..якої.стосується.анкета.,,
-22,,integer,older_chid_number_house,Ile.dzieci.starszych.od.dziecka..którego.dotyczy.kwestionariusz..mieszka.w.tym.gospodarstwie.domowym.,Скільки.дітей..старших.за.дитину..охоплену.анкетою..проживає.в.цьому.домогосподарстві.,Hvor.mange.barn.som.bor.i.samme.husholdning.er.eldre.enn.barnet.skjemaet.dreier.seg.om.,Скільки.дітей..старших.за.дитину..охоплену.анкетою..проживає.в.цьому.домогосподарстві.,,
-23,,,first_word,W.jakim.mniej.więcej.wieku..w.miesiącach..dziecko.wypowiedziało.pierwsze.słowo.,Приблизно.в.якому.віці..у.місяцях..дитина.вимовила.перше.слово.,Hvor.gammelt..i.måneder..var.barnet.da.han.hun.sa.sitt.første.ord.,Приблизно.в.якому.віці..у.місяцях..дитина.вимовила.перше.слово.,,
-24,,,first_phrase,W.jakim.mniej.więcej.wieku..w.miesiącach..dziecko.zaczęło.składać.słowa.w.pierwsze.krótkie.wypowiedzi...i..np...jeszcze.mleko....daj.wodę....Tomek.spać....i.,Приблизно.в.якому.віці..у.місяцях..дитина.почала.складати.слова.в.перші.короткі.висловлювання...i..наприклад...ще.молоко....дай.води....Аня.спати....i.,Hvor.gammelt.var.barnet.da.han.hun.begynte.å.kombinere.ord.for.å.lage.korte.setninger...i..f.eks...mer.melk....få.vann...Anna.sove....i.,Приблизно.в.якому.віці..у.місяцях..дитина.почала.складати.слова.в.перші.короткі.висловлювання...i..наприклад...ще.молоко....дай.води....Аня.спати....i.,,
-25,yes,logical,worried,Czy.martwią.Panią.Pana.jakieś.sprawy.związane.z.rozwojem.języka.dziecka.,Чи.Вас.турбують.питання..пов.язані.з.розвитком.мови.вашої.дитини.,Er.du.bekymret.for.språket.til.barnet.,Чи.Вас.турбують.питання..пов.язані.з.розвитком.мови.вашої.дитини.,,
-26,yes,,worried_why,Proszę.krótko.opisać..co.martwi.Panią.Pana.w.związku.z.rozwojem.języka.dziecka.,Коротко.опишіть..що.вас.турбує.щодо.розвитку.мови.вашої.дитини.,Hvis.JA..beskriv.kort.,Коротко.опишіть..що.вас.турбує.щодо.розвитку.мови.вашої.дитини.,,
-27,yes,logical,health_problems,Czy.dziecko.ma.jakieś.poważne.problemy.zdrowotne.lub.rozwojowe.,Чи.є.у.дитини.серйозні.проблеми.зі.здоров.ям.або.розвитком.,Har.barnet.noen.alvorlige.medisinske.eller.utviklingsmessige.utfordringer.,Чи.є.у.дитини.серйозні.проблеми.зі.здоров.ям.або.розвитком.,,
-28,yes,,health_problems_what,Proszę.krótko.opisać..na.czym.polegają.problemy.zdrowotne.lub.rozwojowe.dziecka.,Будь.ласка.коротко.опишіть..у.чому.полягають.проблеми.зі.здоров.ям.чи.розвитком.дитини.,Hvis.JA..vennligst.spesifiser.,Будь.ласка.коротко.опишіть..у.чому.полягають.проблеми.зі.здоров.ям.чи.розвитком.дитини.,,
-29,yes,logical,hearing_loss,Czy.dziecko.kiedykolwiek.utraciło.chwilowo.słuch.,Чи.Ваша.дитина.коли.небудь.тимчасово.втрачала.слух.,Har.barnet.ditt.hatt.hørselsvansker.,Чи.Ваша.дитина.коли.небудь.тимчасово.втрачала.слух.,,
-30,yes,logical,other_lang,Czy.dziecko.ma.regularny.kontakt.z.osobami.mówiącymi.do.niego.w.języku.innym.niż.polski..np..niania..dziadkowie....br.Proszę.zaznaczyć..TAK..również.wtedy..kiedy.dziecko.ma.kontakt.ze.śląskim..kaszubskim.lub.jakąś.regionalną.odmianą.języka.polskiego.,Чи.дитина.регулярно.контактує.з.людьми..які.розмовляють.з.нею.іншою.мовою..відмінною.від.української..наприклад..няня..бабуся.та.дідусь....br.Будь.ласка..виберіть..ТАК..також..якщо.дитина.використовує.в.мовленні.регіональний.діалект.української.мови.,Har.barnet.ditt.jevnlig.kontakt.med.noen.som.snakker.et.annet.språk.enn.norsk.til.barnet..for.eksempel.barnevakt..barnehagelærer..besteforeldre..,Чи.дитина.регулярно.контактує.з.людьми..які.розмовляють.з.нею.іншою.мовою..відмінною.від.української..наприклад..няня..бабуся.та.дідусь....br.Будь.ласка..виберіть..ТАК..також..якщо.дитина.використовує.в.мовленні.регіональний.діалект.української.мови.,,
-31,,,choose_lang,Proszę.wybrać.wszystkie.języki..poza.polskim...które.dziecko.regularnie.słyszy.w.swoim.otoczeniu..Proszę.wypełnić.tabelę.również.wtedy..kiedy.dziecko.ma.kontakt.ze.śląskim..kaszubskim.lub.jakąś.odmianą.języka.polskiego..br.Jeśli.dziecko.słyszy.więcej.niż.trzy.języki.inne.niż.polski..prosimy.o.uwzględnienie.tylko.trzech.najczęściej.używanych.języków.,Будь.ласка..виберіть.усі.мови..крім.української...які.ваша.дитина.регулярно.чує.у.своєму.оточенні..br.Якщо.ваша.дитина.чує.більше.трьох.мов..крім.української..будь.ласка..зазначте.лише.три,Vennligst.velg.alle.språk..bortsett.fra.norsk..som.barnet.hører.jevnlig.i.sitt.miljø..Hvis.barnet.er.utsatt.for.mer.enn.tre.andre.språk.enn.norsk..ber.vi.deg.om.å.spesifisere.de.tre.mest.brukte.språkene.,Будь.ласка..виберіть.усі.мови..крім.української...які.ваша.дитина.регулярно.чує.у.своєму.оточенні..br.Якщо.ваша.дитина.чує.більше.трьох.мов..крім.української..будь.ласка..зазначте.лише.три,,
-32,yes,,other1,inny_1,inny_1,inny_1,inny_1,,
-33,yes,,other2,inny_2,inny_2,inny_2,inny_2,,
-34,yes,,other3,inny_3,inny_3,inny_3,inny_3,,
-35,yes,,lang_fluent,W.którym.języku.dziecko.czuje.się.najswobodniej.,Використовуючи.яку.мову.дитина.почувається.найкомфортніше..найвільніше.,Hvilket.språk.tror.du.barnet.ditt.føler.seg.mest.hjemme.i.,Використовуючи.яку.мову.дитина.почувається.найкомфортніше..найвільніше.,,
-36,yes,,lang_frequency,Jak.często.dziecko.miało.kontakt.z.każdym.z.poniższych.języków.do.tej.pory.,Як.часто.дитина.до.цього.часу.стикалася.з.кожною.з.наступних.мов.,Hvor.ofte.hører.barnet.de.følgende.språkene,Як.часто.дитина.до.цього.часу.стикалася.з.кожною.з.наступних.мов.,,
-37,yes,,lang_first_contact,W.jakim.wieku.dziecko.miało.pierwszy.kontakt.z.danym.językiem...i..w.miesiącach...i.,У.якому.віці.дитина.вперше.познайомилася.з.даною.мовою...i..у.місяцях...i.,Hvor.gammelt.var.barnet..i.måneder..da.det.først.hørte.språket.,У.якому.віці.дитина.вперше.познайомилася.з.даною.мовою...i..у.місяцях...i.,,
-38,,,native_q1,Język.polski....,українська.мова.,norsk....,українська.мова.,,
-39,,,other1_q1,Język..span.class..qLabel...b.inny.1..b...span.....,X.span.class..qLabel...b.inny.1..b...span..мова....,X.span.class..qLabel...b.inny.1..b...span.....,X.span.class..qLabel...b.inny.1..b...span..мова....,,
-40,,,other2_q1,Język..span.class..qLabel...b.inny.2..b...span.....,X.span.class..qLabel...b.inny.2..b...span..мова....,X.span.class..qLabel...b.inny.2..b...span.....,X.span.class..qLabel...b.inny.2..b...span..мова....,,
-41,,,other3_q1,Język..span.class..qLabel...b.inny.3..b...span.....,X.span.class..qLabel...b.inny.3..b...span..мова....,X.span.class..qLabel...b.inny.3..b...span.....,X.span.class..qLabel...b.inny.3..b...span..мова....,,
-42,,,native_q2,Język.polski.,Українська.мова.......,norsk.,Українська.мова.......,,
-43,,,other1_q2,Język..span.class..qLabel...b.inny.1..b...span......,X.span.class..qLabel...b.inny.1..b...span..мова.....,X.span.class..qLabel...b.inny.1..b...span......,X.span.class..qLabel...b.inny.1..b...span..мова.....,,
-44,,,other2_q2,Język..span.class..qLabel...b.inny.2..b...span......,X.span.class..qLabel...b.inny.2..b...span..мова.....,X.span.class..qLabel...b.inny.2..b...span......,X.span.class..qLabel...b.inny.2..b...span..мова.....,,
-45,,,other3_q2,Język..span.class..qLabel...b.inny.3..b...span......,X.span.class..qLabel...b.inny.3..b...span..мова.....,X.span.class..qLabel...b.inny.3..b...span......,X.span.class..qLabel...b.inny.3..b...span..мова.....,,
-46,,,native_q3,Język.polski..,Українська.мова...,norsk..,Українська.мова...,,
-47,,,other1_q3,Język..span.class..qLabel...b.inny.1..b...span.......,X.span.class..qLabel...b.inny.1..b...span..мова......,X.span.class..qLabel...b.inny.1..b...span.......,X.span.class..qLabel...b.inny.1..b...span..мова......,,
-48,,,other2_q3,Język..span.class..qLabel...b.inny.2..b...span.......,X.span.class..qLabel...b.inny.2..b...span..мова......,X.span.class..qLabel...b.inny.2..b...span.......,X.span.class..qLabel...b.inny.2..b...span..мова......,,
-49,,,other3_q3,Język..span.class..qLabel...b.inny.3..b...span.......,X.span.class..qLabel...b.inny.3..b...span..мова......,X.span.class..qLabel...b.inny.3..b...span.......,X.span.class..qLabel...b.inny.3..b...span..мова......,,
-50,,,native_q4,Język.polski...,Українська.мова..,norsk...,Українська.мова..,,
-51,,,other1_q4,Język..span.class..qLabel...b.inny.1..b...span........,X.span.class..qLabel...b.inny.1..b...span..мова.......,X.span.class..qLabel...b.inny.1..b...span........,X.span.class..qLabel...b.inny.1..b...span..мова.......,,
-52,,,other2_q4,Język..span.class..qLabel...b.inny.2..b...span........,X.span.class..qLabel...b.inny.2..b...span..мова.......,X.span.class..qLabel...b.inny.2..b...span........,X.span.class..qLabel...b.inny.2..b...span..мова.......,,
-53,,,other3_q4,Język..span.class..qLabel...b.inny.3..b...span........,X.span.class..qLabel...b.inny.3..b...span..мова.......,X.span.class..qLabel...b.inny.3..b...span........,X.span.class..qLabel...b.inny.3..b...span..мова.......,,
-54,,,native_q5,Język.polski.....,Українська.мова....,norsk.....,Українська.мова....,,
-55,,,other1_q5,Język..span.class..qLabel...b.inny.1..b...span.........,X.span.class..qLabel...b.inny.1..b...span..мова........,X.span.class..qLabel...b.inny.1..b...span.........,X.span.class..qLabel...b.inny.1..b...span..мова........,,
-56,,,other2_q5,Język..span.class..qLabel...b.inny.2..b...span.........,X.span.class..qLabel...b.inny.2..b...span..мова........,X.span.class..qLabel...b.inny.2..b...span.........,X.span.class..qLabel...b.inny.2..b...span..мова........,,
-57,,,other3_q5,Język..span.class..qLabel...b.inny.3..b...span.........,X.span.class..qLabel...b.inny.3..b...span..мова........,X.span.class..qLabel...b.inny.3..b...span.........,X.span.class..qLabel...b.inny.3..b...span..мова........,,
-58,,,native_q6,Język.polski.......,Українська.мова......,norsk.......,Українська.мова......,,
-59,,,other1_q6,Język..span.class..qLabel...b.inny.1..b...span..........,X.span.class..qLabel...b.inny.1..b...span..мова.........,X.span.class..qLabel...b.inny.1..b...span..........,X.span.class..qLabel...b.inny.1..b...span..мова.........,,
-60,,,other2_q6,Język..span.class..qLabel...b.inny.2..b...span..........,X.span.class..qLabel...b.inny.2..b...span..мова.........,X.span.class..qLabel...b.inny.2..b...span..........,X.span.class..qLabel...b.inny.2..b...span..мова.........,,
-61,,,other3_q6,Język..span.class..qLabel...b.inny.3..b...span..........,X.span.class..qLabel...b.inny.3..b...span..мова.........,X.span.class..qLabel...b.inny.3..b...span..........,X.span.class..qLabel...b.inny.3..b...span..мова.........,,
-62,,,guardian1_lang,Język..w.którym..b.Pani.Pan.rozmawia.z.dzieckiem..b..,Мова..якою..b.ви.розмовляєте.з.дитиною..b..,Språket.som.du.bruker.sammen.med.barnet.,Мова..якою..b.ви.розмовляєте.з.дитиною..b..,,
-63,,,is_guardian2,Czy.rodzic.opiekun.wypełniający.kwestionariusz.jest.jedynym.opiekunem.wychowującym.dziecko.,Чи.один.з.батьків...опікун.що.заповнює.анкету..є.єдиним.опікуном..який.виховує.дитину.самостійно.,Oppdrar.forelderen.eller.den.foresatte.som.fyller.ut.dette.spørreskjemaet..barnet.alene.,Чи.один.з.батьків...опікун.що.заповнює.анкету..є.єдиним.опікуном..який.виховує.дитину.самостійно.,,
-64,,,guardian2_relation,Kim.jest.dla.dziecka.drugi.rodzic.opiekun.,Ким.для.дитини.є.другий.з.батьків...опікун.,Hvem.er.den.andre.omsorgspersonen.til.barnet.,Ким.для.дитини.є.другий.з.батьків...опікун.,,
-65,,,guardian2_lang,Język..w.którym..b.drugi.rodzic.opiekun.rozmawia.z.dzieckiem..b..,Мова..якою..b.другий.з.батьків...опікун.розмовляє.з.дитиною..b..,Språket.som.den.andre.forelderen.eller.foresatte.bruker.sammen.med.barnet.,Мова..якою..b.другий.з.батьків...опікун.розмовляє.з.дитиною..b..,,
-66,,integer,other_guardians,Czy.są.jeszcze.inni.dorośli..którzy.regularnie.zajmują.się.dzieckiem...np..babcia..niania..opiekun.ka...,Чи.є.ще.дорослі..які.регулярно.займаються.з.дитиною...наприклад..бабуся..няня..опікунка..вихователька...,Er.det.andre.voksne.som.passer.barnet.ditt.minst.10.timer.i.uka...f.eks..en.barnevakt.besteforelder.som.passer.barnet.mens.foreldrene.jobber.,Чи.є.ще.дорослі..які.регулярно.займаються.з.дитиною...наприклад..бабуся..няня..опікунка..вихователька...,,
-67,,,guardian3_relation,Kim.jest.dla.dziecka.dodatkowy.opiekun.,Ким.для.дитини.є.додатковий.опікун.,Hvem.er.den.ekstra.omsorgspersonen.,Ким.для.дитини.є.додатковий.опікун.,,
-68,,,guardian3_lang,Język..w.którym..b.dodatkowy.opiekun.rozmawia.z.dzieckiem..b..,Мова..якою..b.додатковий.опікун.розмовляє.з.дитиною..b..,Språk.som.denne.omsorgspersonen.bruker.med.barnet.,Мова..якою..b.додатковий.опікун.розмовляє.з.дитиною..b..,,
-69,,,guardian4_relation,Kim.jest.dla.dziecka.dodatkowy.opiekun.2.,Ким.для.дитини.є.2.додатковий.опікун.,Hvem.er.den.andre.ekstra.omsorgspersonen.,Ким.для.дитини.є.2.додатковий.опікун.,,
-70,,,guardian4_lang,Język..w.którym..b.dodatkowy.opiekun.2.rozmawia.z.dzieckiem..b..,Мова..якою..b.додатковий.2.опікун.розмовляє.з.дитиною..b..,Språk.som.denne.andre.omsorgspersonen.bruker.med.barnet.,Мова..якою..b.додатковий.2.опікун.розмовляє.з.дитиною..b..,,
-71,,,other_children_lang,Język..w.którym..b.dziecko.rozmawia.z.innymi.dziećmi.mieszkającymi.w.tym.samym.domu..b..,Мова..якою..b..дитина.розмовляє.з.іншими.дітьми..які.проживають.в.тому.ж.будинку..b..,Språk.som.barnet.snakker.med.andre.barn.i.samme.husholdning.,Мова..якою..b..дитина.розмовляє.з.іншими.дітьми..які.проживають.в.тому.ж.будинку..b..,,
-72,,,school,Czy.dziecko.regularnie.uczęszcza.do.przedszkola.szkoły.,Чи.регулярно.дитина.відвідує.дитячий.садок.школу.,Går.barnet.regelmessig.i.barnehage.skole.,Чи.регулярно.дитина.відвідує.дитячий.садок.школу.,,
-73,,integer,school_days,Ile..b.dni.tygodniowo..b..dziecko.uczęszcza.do.przedszkola.szkoły.,Скільки.днів.на.тиждень.дитина.відвідує.дитячий.садок...школу.,Hvor.mange..b.dager.i.uken..b..er.barnet.i.barnehagen.på.skolen.,Скільки.днів.на.тиждень.дитина.відвідує.дитячий.садок...школу.,,
-74,,integer,school_hours,Ile..b.godzin.dziennie..b..dziecko.spędza.w.przedszkolu.szkole.,Скільки.годин.на.день.дитина.проводить.у.садочку.школі.,Hvor.mange..b.timer.per.dag..b..tilbringer.barnet.i.barnehagen.på.skolen.,Скільки.годин.на.день.дитина.проводить.у.садочку.школі.,,
-75,,,sat_school,Czy.dziecko.uczęszcza.na.zajęcia.w.polskiej.szkole.sobotniej...i..dotyczy.dzieci.polskojęzycznych.mieszkających.poza.granicami.Polski...i.,Чи.ваша.дитина.відвідує.суботню.школу.,Går.barnet.på.polsk.lørdagsskole.,Чи.ваша.дитина.відвідує.суботню.школу.,,
-76,,,activity_freq_native,Język..b.polski..b..,X.b.Українська..b..мова.,X.b.norsk..b..,X.b.Українська..b..мова.,,
-77,,,activity_freq_other1,Język..span.class..qLabel...b.inny.1..b...span..,X.span.class..qLabel...b.inny.1..b...span..мова.,X.span.class..qLabel...b.inny.1..b...span..,X.span.class..qLabel...b.inny.1..b...span..мова.,,
-78,,,activity_freq_other2,Język..span.class..qLabel...b.inny.2..b...span..,X.span.class..qLabel...b.inny.2..b...span..мова.,X.span.class..qLabel...b.inny.2..b...span..,X.span.class..qLabel...b.inny.2..b...span..мова.,,
-79,,,activity_freq_other3,Język..span.class..qLabel...b.inny.3..b...span..,X.span.class..qLabel...b.inny.3..b...span..мова.,X.span.class..qLabel...b.inny.3..b...span..,X.span.class..qLabel...b.inny.3..b...span..мова.,,
-80,,,friends_lang,Język..w.którym..b.dziecko.rozmawia.z.kolegami.koleżankami..z.którymi.bawi.się.regularnie..b..,Мова..якою..b..дитина.розмовляє.з.друзями..з.якими.вона.регулярно.грається..b..,Språk.som.barnet.snakker.med.vennene.hun.han.leker.med.jevnlig.,Мова..якою..b..дитина.розмовляє.з.друзями..з.якими.вона.регулярно.грається..b..,,
-81,,,guests_lang,Język..w.którym..b.dziecko.rozmawia.z.odwiedzającymi.Państwa.regularnie.gośćmi..b..,Мова..якою..b.ваша.дитина.розмовляє.з.вашими.постійними.гостями..b..,Språk.som.barnet.snakker.med.gjester.som.jevnlig.besøker.hjemmet.,Мова..якою..b.ваша.дитина.розмовляє.з.вашими.постійними.гостями..b..,,
-82,,,guardian1_birth_country,Pani.Pana.kraj.urodzenia.,Країна.Вашого.народження.,Fødeland.for.forelderen.omsorgsperson.som.fyller.inn.dette.skjemaet.,Країна.Вашого.народження.,,
-83,,,is_guardian1_work,Czy.obecnie.Pani.Pan.pracuje.zawodowo.,Ви.зараз.працюєте.професійно.,Jobber.du.for.tiden.,Ви.зараз.працюєте.професійно.,,
-84,,,guardian1_job,Jaki.zawód.Pani.Pan.wykonuje.,Яка.ваша.професія.,Hva.er.ditt.nåværende.yrke.,Яка.ваша.професія.,,
-85,,,guardian1_last_job,Jaki.był.Pani.Pana.ostatni.wykonywany.zawód.,Якою.була.ваша.остання.професійна.діяльність.,Hva.var.ditt.siste.yrke.,Якою.була.ваша.остання.професійна.діяльність.,,
-86,,,guardian1_lang_work,Język.najczęściej.używany.przez.Panią.Pana.w.pracy.,Мова..якою.Ви.найчастіше.користуєтеся.на.роботі.,Språk.som.oftest.blir.brukt.på.arbeidsplassen.din.,Мова..якою.Ви.найчастіше.користуєтеся.на.роботі.,,
-87,yes,,guardian1_ed,Pani.Pana.wykształcenie.,Ваша.освіта.,Utdanningsnivå.for.forelderen..omsorgspersonen.som.fyller.inn.dette.skjemaet..,Ваша.освіта.,,
-88,,,guardian1_ed_country,W.jakim.kraju.Pani.Pan.zdobył.a..ostatni.poziom.swojego.wykształcenia.,В.якій.країні.ви.отримали.останній.рівень.освіти.,I.hvilket.land.oppnådde.hun.han.sin.høyeste.utdannelse.,В.якій.країні.ви.отримали.останній.рівень.освіти.,,
-89,,,guardian1_native,Język..b.polski..b....,X.b.Українська..b..мова........,X.b.norsk..b....,X.b.Українська..b..мова........,,
-90,,,guardian1_other1,Język..span.class..qLabel...b.inny.1..b...span....,X.span.class..qLabel...b.inny.1..b...span..мова...,X.span.class..qLabel...b.inny.1..b...span....,X.span.class..qLabel...b.inny.1..b...span..мова...,,
-91,,,guardian1_other2,Język..span.class..qLabel...b.inny.2..b...span....,X.span.class..qLabel...b.inny.2..b...span..мова...,X.span.class..qLabel...b.inny.2..b...span....,X.span.class..qLabel...b.inny.2..b...span..мова...,,
-92,,,guardian1_other3,Język..span.class..qLabel...b.inny.3..b...span....,X.span.class..qLabel...b.inny.3..b...span..мова...,X.span.class..qLabel...b.inny.3..b...span....,X.span.class..qLabel...b.inny.3..b...span..мова...,,
-93,,,guardian2_birth_country,Kraj.urodzenia.drugiego.rodzica.opiekuna.,Країна.народження.другого.з.батьків.опікуна.,Fødeland.for.den.andre.forelderen.omsorgspersonen.,Країна.народження.другого.з.батьків.опікуна.,,
-94,,,is_guardian2_work,Czy.obecnie.drugi.rodzic.opiekun.dziecka.pracuje.zawodowo.,Чи.на.даний.момент.другий.з..батьків..чи.опікун.дитини.,Jobber.den.andre.omsorgspersonen.for.tiden.,Чи.на.даний.момент.другий.з..батьків..чи.опікун.дитини.працює.,,
-95,,,guardian2_job,Jaki.zawód.wykonuje.drugi.rodzic.opiekun.,Яка.професія.другого.з.батьків.опікуна.,Hva.er.den.andre.forelderens.eller.foresattes.nåværende.yrke.,Яка.професія.другого.з.батьків.опікуна.,,
-96,,,guardian2_last_job,Jaki.był.ostatni.wykonywany.zawód.drugiego.rodzica.opiekuna.,Яка.була.остання.професія..яку.виконував.другий.з.батьків.опікун.,Hva.var.den.andre.forelderens.eller.foresattes.siste.yrke.,Яка.була.остання.професія..яку.виконував.другий.з.батьків.опікун.,,
-97,,,guardian2_lang_work,Język.najczęściej.używany.przez.drugiego.rodzica.opiekuna.w.pracy.,Мова..яку.найчастіше.використовує.на.роботі.другий.з.батьків...опікун.,Språk.mest.brukt.på.den.andre.forelderens.eller.foresattes.arbeidsplass.,Мова..яку.найчастіше.використовує.на.роботі.другий.з.батьків...опікун.,,
-98,,,guardian2_ed,Wykształcenie.drugiego.rodzica.opiekuna.,Освіта.другого.з.батьків...опікуна.,Utdanningsnivået.til.den.andre.forelderens.eller.foresattes.,Освіта.другого.з.батьків...опікуна.,,
-99,,,guardian2_ed_country,W.jakim.kraju.drugi.rodzic.opiekun.zdobył.ostatni.poziom.swojego.wykształcenia.,У.якій.країні.другий.з.батьків.опікунів.отримав.останній.рівень.освіти.,I.hvilket.land.oppnådde.den.andre.forelderen.eller.foresatte.sin.siste.utdannelsegrad.,У.якій.країні.другий.з.батьків.опікунів.отримав.останній.рівень.освіти.,,
-100,,,guardian2_native,Język..b.polski..b...,X.b.Українська...b..мова..,X.b.norsk..b...,X.b.Українська...b..мова..,,
-101,,,guardian2_other1,Język..span.class..qLabel...b.inny.1..b...span...,X.span.class..qLabel...b.inny.1..b...span..мова..,X.span.class..qLabel...b.inny.1..b...span...,X.span.class..qLabel...b.inny.1..b...span..мова..,,
-102,,,guardian2_other2,Język..span.class..qLabel...b.inny.2..b...span...,X.span.class..qLabel...b.inny.2..b...span..мова..,X.span.class..qLabel...b.inny.2..b...span...,X.span.class..qLabel...b.inny.2..b...span..мова..,,
-103,,,guardian2_other3,Język..span.class..qLabel...b.inny.3..b...span...,X.span.class..qLabel...b.inny.3..b...span..мова..,X.span.class..qLabel...b.inny.3..b...span...,X.span.class..qLabel...b.inny.3..b...span..мова..,,
-104,,,problem_read_write,Trudności.głównie.z.czytaniem.i.ortografią.,Труднощі.в.основному.з.читанням.і.орфографією.,Vansker.med.å.lese.og.skrive.,Труднощі.в.основному.з.читанням.і.орфографією.,,
-105,,,problem_understand,Trudności.ze.zrozumieniem..co.mówią.inni.,Труднощі.з.розумінням.того...що.говорять.інші.,Vansker.med.å.forstå.andre.når.de.snakker.,Труднощі.з.розумінням.того...що.говорять.інші.,,
-106,,,problem_speak,Trudności.z.mówieniem..wymowa..formułowanie.zdań..znajdowanie.właściwych.słów..itp..,Труднощі.з.мовленням..вимова..формулювання.речень..пошук.потрібних.слів.тощо.,Vansker.med.å.uttrykke.seg.selv.muntlig..uttale..lage.setninger..finne.det.rette.ordet..osv...,Труднощі.з.мовленням..вимова..формулювання.речень..пошук.потрібних.слів.тощо.,,
-107,,,date_birth_new,Data.urodzenia.dziecka..1,Дата.народження.дитини..1,,З.якого.часу.дитина.проживає.в.даній..теперішній..поточній..країні..1,,
-108,,,isc_when_old,Od.kiedy.dziecko.mieszka.w.obecnym.kraju.zamieszkania..1,З.якого.часу.дитина.проживає.в.даній..теперішній..поточній..країні..1,,Дата.народження.дитини..1,,
-,,,,form_group,form_group.1,,form_group.1,,
-,,,date_of_birth_new,,,,,,
+Import,Type,Label,pl
+,,ID,ID
+yes,%Y-%m-%d %H:%M:%S,submission_pabiq,Submit date
+,,sb_ip,Submitter's IP
+,,sb_username,Submitter's Username
+,,sb_email,Submitter's Email Address
+yes,,id,_id
+,,form_group,form_group
+yes,,caregiver1_relation,Kim jest Pani/Pan dla dziecka?
+yes,%d-%m-%Y,birth_date,Data urodzenia dziecka:
+yes,integer,age_years,Wiek dziecka (liczba skończonych lat):
+yes,,country,Kraj zamieszkania dziecka:
+yes,,region,Województwo/Region zamieszkania dziecka:
+,,city,Miejscowość zamieszkania dziecka:
+yes,,city_town_countryside,Typ miejscowości zamieszkania dziecka:
+yes,logical,is_same_country,"Czy dziecko mieszka w kraju, w którym się urodziło?"
+yes,,birth_country,Kraj urodzenia dziecka:
+,,region_birth,Województwo/Region urodzenia dziecka:
+,,city_birth,Miejscowość urodzenia dziecka:
+,%d-%m-%Y,isc_when_old,Od kiedy dziecko mieszka w obecnym kraju zamieszkania?
+yes,,sex,Płeć dziecka:
+yes,integer,other_children,"Ile dzieci mieszka w tym samym gospodarstwie domowym co dziecko, którego dotyczy kwestionariusz?"
+yes,integer,older_children,"Ile dzieci starszych od dziecka, którego dotyczy kwestionariusz, mieszka w tym gospodarstwie domowym?"
+,,first_word,W jakim mniej więcej wieku (w miesiącach) dziecko wypowiedziało pierwsze słowo?
+,,first_phrase,"W jakim mniej więcej wieku (w miesiącach) dziecko zaczęło składać słowa w pierwsze krótkie wypowiedzi? <i>(np: ""jeszcze mleko"", ""daj wodę"", ""Tomek spać"")</i>"
+yes,logical,worried,Czy martwią Panią/Pana jakieś sprawy związane z rozwojem języka dziecka?
+yes,,worried_why,"Proszę krótko opisać, co martwi Panią/Pana w związku z rozwojem języka dziecka:"
+yes,logical,health_problems,Czy dziecko ma jakieś poważne problemy zdrowotne lub rozwojowe?
+yes,,health_problems_what,"Proszę krótko opisać, na czym polegają problemy zdrowotne lub rozwojowe dziecka:"
+yes,logical,hearing_loss,Czy dziecko kiedykolwiek utraciło chwilowo słuch?
+yes,logical,other_lang,"Czy dziecko ma regularny kontakt z osobami mówiącymi do niego w języku innym niż polski (np. niania, dziadkowie)? <br>Proszę zaznaczyć ""TAK"" również wtedy, kiedy dziecko ma kontakt ze śląskim, kaszubskim lub jakąś regionalną odmianą języka polskiego."
+,,choose_lang,"Proszę wybrać wszystkie języki (poza polskim), które dziecko regularnie słyszy w swoim otoczeniu. Proszę wypełnić tabelę również wtedy, kiedy dziecko ma kontakt ze śląskim, kaszubskim lub jakąś odmianą języka polskiego.<br>Jeśli dziecko słyszy więcej niż trzy języki inne niż polski, prosimy o uwzględnienie tylko trzech najczęściej używanych języków."
+yes,,inny.1,inny_1
+yes,,inny.2,inny_2
+yes,,inny.3,inny_3
+yes,,lang_fluent,W którym języku dziecko czuje się najswobodniej?
+yes,,lang_frequency,Jak często dziecko miało kontakt z każdym z poniższych języków do tej pory?
+yes,,lang_first_contact,W jakim wieku dziecko miało pierwszy kontakt z danym językiem? <i>(w miesiącach)</i>
+,,native_q1,Język polski:...38
+,,other1_q1,"Język <span class=""qLabel""><b>inny 1</b></span>:...39"
+,,other2_q1,"Język <span class=""qLabel""><b>inny 2</b></span>:...40"
+,,other3_q1,"Język <span class=""qLabel""><b>inny 3</b></span>:...41"
+,,native_q2,Język polski:...42
+,,other1_q2,"Język <span class=""qLabel""><b>inny 1</b></span>:...43"
+,,other2_q2,"Język <span class=""qLabel""><b>inny 2</b></span>:...44"
+,,other3_q2,"Język <span class=""qLabel""><b>inny 3</b></span>:...45"
+,,native_q3,Język polski:...46
+,,other1_q3,"Język <span class=""qLabel""><b>inny 1</b></span>:...47"
+,,other2_q3,"Język <span class=""qLabel""><b>inny 2</b></span>:...48"
+,,other3_q3,"Język <span class=""qLabel""><b>inny 3</b></span>:...49"
+,,native_q4,Język polski:...50
+,,other1_q4,"Język <span class=""qLabel""><b>inny 1</b></span>:...51"
+,,other2_q4,"Język <span class=""qLabel""><b>inny 2</b></span>:...52"
+,,other3_q4,"Język <span class=""qLabel""><b>inny 3</b></span>:...53"
+,,native_q5,Język polski:...54
+,,other1_q5,"Język <span class=""qLabel""><b>inny 1</b></span>:...55"
+,,other2_q5,"Język <span class=""qLabel""><b>inny 2</b></span>:...56"
+,,other3_q5,"Język <span class=""qLabel""><b>inny 3</b></span>:...57"
+,,native_q6,Język polski:...58
+,,other1_q6,"Język <span class=""qLabel""><b>inny 1</b></span>:...59"
+,,other2_q6,"Język <span class=""qLabel""><b>inny 2</b></span>:...60"
+,,other3_q6,"Język <span class=""qLabel""><b>inny 3</b></span>:...61"
+,,caregiver1_lang,"Język, w którym <b>Pani/Pan rozmawia z dzieckiem</b>:"
+,,is_caregiver2,Czy rodzic/opiekun wypełniający kwestionariusz jest jedynym opiekunem wychowującym dziecko?
+,,caregiver2_relation,Kim jest dla dziecka drugi rodzic/opiekun?
+,,caregiver2_lang,"Język, w którym <b>drugi rodzic/opiekun rozmawia z dzieckiem</b>:"
+,integer,other_caregivers,"Czy są jeszcze inni dorośli, którzy regularnie zajmują się dzieckiem? (np. babcia, niania, opiekun(ka))?"
+,,caregiver3_relation,Kim jest dla dziecka dodatkowy opiekun?
+,,caregiver3_lang,"Język, w którym <b>dodatkowy opiekun rozmawia z dzieckiem</b>:"
+,,caregiver4_relation,Kim jest dla dziecka dodatkowy opiekun 2?
+,,caregiver4_lang,"Język, w którym <b>dodatkowy opiekun 2 rozmawia z dzieckiem</b>:"
+,,other_children_lang,"Język, w którym <b>dziecko rozmawia z innymi dziećmi mieszkającymi w tym samym domu</b>:"
+,,school,Czy dziecko regularnie uczęszcza do przedszkola/szkoły?
+,integer,school_days,Ile <b>dni tygodniowo</b> dziecko uczęszcza do przedszkola/szkoły?
+,integer,school_hours,Ile <b>godzin dziennie</b> dziecko spędza w przedszkolu/szkole?
+,,sat_school,Czy dziecko uczęszcza na zajęcia w polskiej szkole sobotniej? <i>(dotyczy dzieci polskojęzycznych mieszkających poza granicami Polski)</i>
+,,activity_freq_native,Język <b>polski</b>:...76
+,,activity_freq_other1,"Język <span class=""qLabel""><b>inny 1</b></span>:...77"
+,,activity_freq_other2,"Język <span class=""qLabel""><b>inny 2</b></span>:...78"
+,,activity_freq_other3,"Język <span class=""qLabel""><b>inny 3</b></span>:...79"
+,,friends_lang,"Język, w którym <b>dziecko rozmawia z kolegami/koleżankami, z którymi bawi się regularnie</b>:"
+,,guests_lang,"Język, w którym <b>dziecko rozmawia z odwiedzającymi Państwa regularnie gośćmi</b>:"
+,,caregiver1_birth_country,Pani/Pana kraj urodzenia:
+,,is_caregiver1_work,Czy obecnie Pani/Pan pracuje zawodowo?
+,,caregiver1_job,Jaki zawód Pani/Pan wykonuje?
+,,caregiver1_last_job,Jaki był Pani/Pana ostatni wykonywany zawód?
+,,caregiver1_lang_work,Język najczęściej używany przez Panią/Pana w pracy:
+yes,,caregiver1_ed,Pani/Pana wykształcenie:
+,,caregiver1_ed_country,W jakim kraju Pani/Pan zdobył(a) ostatni poziom swojego wykształcenia?
+,,caregiver1_native,Język <b>polski</b>:...89
+,,caregiver1_other1,"Język <span class=""qLabel""><b>inny 1</b></span>:...90"
+,,caregiver1_other2,"Język <span class=""qLabel""><b>inny 2</b></span>:...91"
+,,caregiver1_other3,"Język <span class=""qLabel""><b>inny 3</b></span>:...92"
+,,caregiver2_birth_country,Kraj urodzenia drugiego rodzica/opiekuna:
+,,is_caregiver2_work,Czy obecnie drugi rodzic/opiekun dziecka pracuje zawodowo?
+,,caregiver2_job,Jaki zawód wykonuje drugi rodzic/opiekun?
+,,caregiver2_last_job,Jaki był ostatni wykonywany zawód drugiego rodzica/opiekuna?
+,,caregiver2_lang_work,Język najczęściej używany przez drugiego rodzica/opiekuna w pracy:
+,,caregiver2_ed,Wykształcenie drugiego rodzica/opiekuna:
+,,caregiver2_ed_country,W jakim kraju drugi rodzic/opiekun zdobył ostatni poziom swojego wykształcenia?
+,,caregiver2_native,Język <b>polski</b>:...100
+,,caregiver2_other1,"Język <span class=""qLabel""><b>inny 1</b></span>:...101"
+,,caregiver2_other2,"Język <span class=""qLabel""><b>inny 2</b></span>:...102"
+,,caregiver2_other3,"Język <span class=""qLabel""><b>inny 3</b></span>:...103"
+,,problem_read_write,Trudności głównie z czytaniem i ortografią:
+,,problem_understand,"Trudności ze zrozumieniem, co mówią inni:"
+,,problem_speak,"Trudności z mówieniem (wymowa, formułowanie zdań, znajdowanie właściwych słów, itp.)"
