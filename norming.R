@@ -5,6 +5,10 @@ library(Multilada)
 export_date <- "20240411"
 scr_ids <- pull(read_csv("scr_pl.csv", col_select = 1, col_types = "c"))
 
+connection <- multilada_connect("sw")
+sw_ids <- RMariaDB::dbGetQuery(connection, "SELECT DISTINCT child.child_hash FROM child, `user` WHERE user.family_id = child.family_id AND user.test IS NULL")[[1]]
+RMariaDB::dbDisconnect(connection)
+
 # PABIQ processing:
 
 # To prepare import uncomment:
@@ -15,6 +19,7 @@ pabiq_data <- fm_read(paste0("PABIQSCRPL_", export_date, ".csv"),
 
 #CLT database mailing was on 2023-09-05
 pabiq_data %>% mutate(source = case_when(id %in% scr_ids ~ "screentime",
+                                         id %in% sw_ids ~ "SW",
                                          submission_pabiq > "2023-09-04" ~ "norming")) -> pabiq_data
 pabiq_data %>% filter(! is.na(source)) -> pabiq_data
 
@@ -33,7 +38,12 @@ read_delim("voivodeships.csv", col_names = "region", delim = "\n") %>%
   separate_wider_delim(region, "\t",
                        names = c("region", "voivodeship"),
                        too_few = "align_start") -> voivodeships
-left_join(pabiq_data, voivodeships) -> pabiq_data
+if("voivodeship" %in% colnames(pabiq_data)) {
+  pabiq_data %>% select(- voivodeship) %>%
+    left_join(voivodeships) -> pabiq_data
+} else {
+  left_join(pabiq_data, voivodeships) -> pabiq_data
+}
 
 # After updating pabiq data csv file:
 # pabiq_data %>% select(region, voivodeship) %>%
@@ -48,6 +58,10 @@ ifelse(is.na(pabiq_data$voivodeship) | pabiq_data$voivodeship == "",
 
 
 ## Filtering
+
+# The procedure below filters out some SW submissions,
+# which are obvious self-corrections,
+# suggesting it's too strict!
 
 #Potential scam:
 pabiq_data %>% group_by(id) %>%
@@ -100,12 +114,14 @@ pabiq_data %>% group_by(id) %>%
 
 # CDI processing:
 
-cdi_read("cdi", "cdi3-scr_pl") %>% filter(id %in% pabiq_data$id) -> cdi_responses
+bind_rows(
+  cdi_read("cdi", "cdi3-scr_pl"),
+  cdi_read("cdi", "cdi3_pl")) %>% filter(id %in% pabiq_data$id) -> cdi_responses
 
 #Empty alternatives filtering
 empty_alternatives <- cdi_count_checkboxAlt(cdi_responses, "alternatives", answer = "none") %>%
   mutate(empty_alt = n == 16) %>% filter(empty_alt) %>% select(id)
-# Dziewięć takich wypełnień, odpowiedzi w pabiqu sugerują
+# Dziesięć takich wypełnień, odpowiedzi w pabiqu sugerują
 # rzetelność co najmniej dwóch pierwszych (jeszcze do sprawdzenia kiedyś),
 # ale potencjalne problemy zdrowotne/rozwojowe, więc i tak można wykluczyć:
 cdi_responses %>% filter(! id %in% empty_alternatives) -> cdi_responses
@@ -138,27 +154,33 @@ left_join(data, cdi_count_radio(cdi_responses, "yesNo")) %>%
 
 consent_data <- fm_read(paste0("IRMIK3_", export_date, ".csv"),
                         "consent_labels_cdi3pl.csv", lang = "pl")
-inner_join(data, consent_data) -> data
-data %>% mutate(gap_consent = submission_pabiq - submission_consent) -> data
-data %>% group_by(id) %>% reframe(submission_consent, submission_pabiq, gap_consent,
+inner_join(data, consent_data) -> consent_data
+consent_data %>% mutate(gap_consent = submission_pabiq - submission_consent) -> consent_data
+consent_data %>% group_by(id) %>% reframe(submission_consent, submission_pabiq, gap_consent,
                                   duration, info_source, preschool, n = n()) %>%
   filter(n > 1) -> multiple_consents
 
-data %>% group_by(id) %>%
+consent_data %>% group_by(id) %>%
   filter(gap_consent > 0) %>%
-  filter(gap_consent == min(gap_consent)) -> data
+  filter(gap_consent == min(gap_consent)) -> consent_data
 
-# Obvious test submissions:
+data %>% filter(source == "SW") %>%
+  bind_rows(consent_data) -> data
+
+# Obvious test submissions
+# (tu w przyszłości zmienić na bardziej robust check:
+# wszystkie id, które nie pasują do jednego z dwóch wzorów):
 data %>% filter(caregiver1_relation != "Test Karo") -> data
 
 # Filling time histogram:
-data %>% ggplot() +
-  geom_histogram(aes(duration), binwidth = 30, boundary = 1) +
-  labs(x = "Duration in minutes", y = "Number of submissions") +
-  scale_x_time(breaks = breaks_width("2 min", offset = "1 min"), labels = label_time("%M"))
+# data %>% ggplot() +
+#   geom_histogram(aes(duration), binwidth = 30, boundary = 1) +
+#   labs(x = "Duration in minutes", y = "Number of submissions") +
+#   scale_x_time(breaks = breaks_width("2 min", offset = "1 min"), labels = label_time("%M"))
 
-# Możemy przyjąć kryterium odcięcia < 90 sek. (najkrótszy czas wypełnienia w SW):
-data %>% filter(duration > "90 sec") -> data
+# Możemy przyjąć jako kryterium odcięcia najkrótszy czas wypełnienia w SW:
+data %>% ungroup() %>% filter(source == "SW") %>% summarise(min(duration)) %>% pull() -> min_time
+data %>% filter(duration >= min_time) -> data
 
 
 fct_collapse(data$voivodeship,
@@ -171,7 +193,6 @@ fct_collapse(data$voivodeship,
              "mazowiecki" = "Mazowieckie",
              other_level = "zagranica"
 ) -> data$macroregion
-data %>% filter(! is.na(macroregion)) -> data
 
 # W poniższym potwierdzić klasyfikację (głównie "zawodowe"):
 fct_collapse(data$caregiver1_ed,
