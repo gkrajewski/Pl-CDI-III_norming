@@ -3,6 +3,7 @@ library(scales) # for time in X axis (duration histograms)
 library(Multilada)
 
 export_date <- "20240411"
+scr_ids <- pull(read_csv("scr_pl.csv", col_select = 1, col_types = "c"))
 
 # PABIQ processing:
 
@@ -13,7 +14,9 @@ pabiq_data <- fm_read(paste0("PABIQSCRPL_", export_date, ".csv"),
                       "pabiq_labels_cdi3pl.csv", "pabiq_translations_cdi3pl.csv", "pl")
 
 #CLT database mailing was on 2023-09-05
-pabiq_data %>% filter(submission_pabiq > "2023-09-04") -> pabiq_data
+pabiq_data %>% mutate(source = case_when(id %in% scr_ids ~ "screentime",
+                                         submission_pabiq > "2023-09-04" ~ "norming")) -> pabiq_data
+pabiq_data %>% filter(! is.na(source)) -> pabiq_data
 
 #Calculate age:
 pabiq_data$age <- age_months(pabiq_data$birth_date, pabiq_data$submission_pabiq)
@@ -51,7 +54,7 @@ pabiq_data %>% group_by(id) %>%
   summarise(n = n()) %>%
   filter(n > 1) -> potential_scam
 
-#Obvious scam:
+#Too many potential siblings:
 pabiq_data %>% group_by(id) %>%
   summarise(n = n()) %>%
   filter(n > 4) -> scam
@@ -102,9 +105,10 @@ cdi_read("cdi", "cdi3-scr_pl") %>% filter(id %in% pabiq_data$id) -> cdi_response
 #Empty alternatives filtering
 empty_alternatives <- cdi_count_checkboxAlt(cdi_responses, "alternatives", answer = "none") %>%
   mutate(empty_alt = n == 16) %>% filter(empty_alt) %>% select(id)
-# Dziewięć takich wypełnień, ale odpowiedzi w pabiqu sugerują
-# rzetelność dwóch pierwszych (jeszcze do sprawdzenia kiedyś):
-cdi_responses %>% filter(! id %in% empty_alternatives[3:nrow(empty_alternatives), "id"]) -> cdi_responses
+# Dziewięć takich wypełnień, odpowiedzi w pabiqu sugerują
+# rzetelność co najmniej dwóch pierwszych (jeszcze do sprawdzenia kiedyś),
+# ale potencjalne problemy zdrowotne/rozwojowe, więc i tak można wykluczyć:
+cdi_responses %>% filter(! id %in% empty_alternatives) -> cdi_responses
 
 cdi_submissions(cdi_responses) %>%
   left_join(pabiq_data) -> data
@@ -115,7 +119,9 @@ data %>% mutate(gap_pabiq = start_date - submission_pabiq) -> data
 data %>% group_by(id) %>% reframe(submission_date = submission_pabiq, start_date, gap_pabiq, n = n()) %>%
   filter(n > 1) %>% select(! n) -> multiple_pabiqs
 
-data %>% group_by(id) %>% filter(gap_pabiq == min(abs(gap_pabiq))) -> data
+data %>% group_by(id) %>%
+  filter(gap_pabiq > 0) %>%
+  filter(gap_pabiq == min(gap_pabiq)) -> data
 
 left_join(data, cdi_count_oneCheckboxGroup(cdi_responses, "word")) %>%
   rename(score_lexicon = n) %>% select(-type) -> data
@@ -162,8 +168,10 @@ fct_collapse(data$voivodeship,
              "północny" = c("Kujawsko-Pomorskie", "Pomorskie", "Warmińsko-Mazurskie"),
              "centralny" = c("Łódzkie", "Świętokrzyskie"),
              "wschodni" = c("Lubelskie", "Podkarpackie", "Podlaskie"),
-             "mazowiecki" = "Mazowieckie"
+             "mazowiecki" = "Mazowieckie",
+             other_level = "zagranica"
 ) -> data$macroregion
+data %>% filter(! is.na(macroregion)) -> data
 
 # W poniższym potwierdzić klasyfikację (głównie "zawodowe"):
 fct_collapse(data$caregiver1_ed,
