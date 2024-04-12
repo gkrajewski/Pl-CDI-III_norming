@@ -173,7 +173,7 @@ data %>% filter(source == "SW") %>%
 data %>% filter(caregiver1_relation != "Test Karo") -> data
 
 # Filling time histogram:
-# data %>% ggplot() +
+# data %>% filter(duration < "1 hour") %>% ggplot() +
 #   geom_histogram(aes(duration), binwidth = 30, boundary = 1) +
 #   labs(x = "Duration in minutes", y = "Number of submissions") +
 #   scale_x_time(breaks = breaks_width("2 min", offset = "1 min"), labels = label_time("%M"))
