@@ -1,6 +1,6 @@
 Import,Label,Type,pl
 yes,submission_consent,%Y-%m-%d %H:%M:%S,Submit date
-,,,Submitter's IP
+yes,ip_address,,Submitter's IP
 yes,id,,_id
 yes,info_source,,info_source
 yes,preschool,,preschool

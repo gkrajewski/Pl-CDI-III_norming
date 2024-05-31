@@ -147,26 +147,6 @@ left_join(data, cdi_count_radio(cdi_responses, "yesNo")) %>%
   rename(score_direct = n) %>% select(-c(type, answer)) -> data
 
 
-# Consent form processing:
-
-# To prepare import uncomment:
-# fm_variables(paste0("IRMIK3_", export_date, ".csv"), lang = "pl", target_file = "consent_labels_cdi3pl.csv")
-
-consent_data <- fm_read(paste0("IRMIK3_", export_date, ".csv"),
-                        "consent_labels_cdi3pl.csv", lang = "pl")
-inner_join(data, consent_data) -> consent_data
-consent_data %>% mutate(gap_consent = submission_pabiq - submission_consent) -> consent_data
-consent_data %>% group_by(id) %>% reframe(submission_consent, submission_pabiq, gap_consent,
-                                  duration, info_source, preschool, n = n()) %>%
-  filter(n > 1) -> multiple_consents
-
-consent_data %>% group_by(id) %>%
-  filter(gap_consent > 0) %>%
-  filter(gap_consent == min(gap_consent)) -> consent_data
-
-data %>% filter(source == "SW") %>%
-  bind_rows(consent_data) -> data
-
 # Obvious test submissions
 # (tu w przyszłości zmienić na bardziej robust check:
 # wszystkie id, które nie pasują do jednego z dwóch wzorów):
@@ -204,6 +184,24 @@ fct_collapse(data$caregiver1_ed,
 capture.output(
   table(data$caregiver1_ed, data$city_town_countryside, data$macroregion),
   file = "cdi3_norm_counts.txt")
+
+
+# Consent form processing:
+
+# To prepare import uncomment:
+# fm_variables(paste0("IRMIK3_", export_date, ".csv"), lang = "pl", target_file = "consent_labels_cdi3pl.csv")
+
+fm_read(paste0("IRMIK3_", export_date, ".csv"),
+        "consent_labels_cdi3pl.csv", lang = "pl") %>%
+  filter(submission_consent > "2023-09-04") %>% left_join(data) %>%
+  mutate(gap_consent = submission_pabiq - submission_consent) %>%
+  group_by(id) %>% mutate(attempts = n(), another_attempt = gap_consent < 0) %>%
+  select(1:4 | last_col(3) : last_col()) -> consent_data
+consent_data %>% group_by(id) %>%
+  filter(! another_attempt) %>% mutate(paired = gap_consent == min(gap_consent)) %>%
+  right_join(consent_data) -> consent_data
+
+write_csv(consent_data, "consent_submissions.csv", na = "")
 
 ## POWYŻEJ ZAKOŃCZYŁEM
 
