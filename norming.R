@@ -183,9 +183,60 @@ fct_collapse(data$caregiver1_ed,
              "wyższe" = c("wyższe", "doktorat")
 ) -> data$caregiver1_ed
 
+
+# Sample summaries:
+
 capture.output(
   table(data$caregiver1_ed, data$city_town_countryside, data$macroregion),
   file = paste0("cdi3_norm_counts_", export_date, ".txt"))
+
+data %>% mutate(age_range = age %in% 34:48) %>%
+  filter(macroregion != "zagranica") -> data
+
+## Sex:
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = sex), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  labs(x = "Age (months)", y = "Number") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Sex"))
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = sex), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  facet_wrap(vars(macroregion)) +
+  labs(x = "Age (months)", y = "Number", caption = "by macroregions") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Sex"))
+
+## Education:
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = caregiver1_ed), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  labs(x = "Age (months)", y = "Number") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Education"))
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = caregiver1_ed), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  facet_wrap(vars(macroregion)) +
+  labs(x = "Age (months)", y = "Number", caption = "by macroregions") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Education"))
+
+## City-town-countryside:
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = city_town_countryside), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  labs(x = "Age (months)", y = "Number") +
+  guides(alpha = FALSE, fill = guide_legend(title = ""))
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = city_town_countryside), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  facet_wrap(vars(macroregion)) +
+  labs(x = "Age (months)", y = "Number", caption = "by macroregions") +
+  guides(alpha = FALSE, fill = guide_legend(title = ""))
 
 
 # Consent form processing:
