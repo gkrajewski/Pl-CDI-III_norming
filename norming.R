@@ -2,7 +2,9 @@ library(tidyverse)
 library(scales) # for time in X axis (duration histograms)
 library(Multilada)
 
-export_date <- "20240411"
+export_date <- list.files(pattern ="_[0-9]{8}\\.csv") %>%
+  str_extract("[0-9]{8}") %>% sort() %>% last()
+
 scr_ids <- pull(read_csv("scr_pl.csv", col_select = 1, col_types = "c"))
 
 connection <- multilada_connect("sw")
@@ -183,7 +185,7 @@ fct_collapse(data$caregiver1_ed,
 
 capture.output(
   table(data$caregiver1_ed, data$city_town_countryside, data$macroregion),
-  file = "cdi3_norm_counts.txt")
+  file = paste0("cdi3_norm_counts_", export_date, ".txt"))
 
 
 # Consent form processing:
@@ -201,7 +203,7 @@ consent_data %>% group_by(id) %>%
   filter(! another_attempt) %>% mutate(paired = gap_consent == min(gap_consent)) %>%
   right_join(consent_data) -> consent_data
 
-write_csv(consent_data, "consent_submissions.csv", na = "")
+write_csv(consent_data, paste0("consent_submissions_", export_date, ".csv"), na = "")
 
 ## POWYŻEJ ZAKOŃCZYŁEM
 
