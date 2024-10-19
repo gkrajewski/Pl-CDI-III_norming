@@ -1,0 +1,529 @@
+---
+title: "Pl-CDI-III norming study"
+author: "Grzegorz Krajewski"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+# Setup {.tabset}
+
+**No need to check tabs other than "Basics", unless you know you should.**
+
+Also, jump to the
+["Sample summaries" section](#sample-summaries), if that's all you need.
+
+```{r setup, include=FALSE}
+# Packages:
+library(tidyverse)
+library(scales) # for time in X axis (duration histograms)
+library(Multilada)
+library(knitr) # for tables
+library(kableExtra) # for tables
+
+# knitr chunk defaults:
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+
+# Latest website download:
+export_date <- list.files(pattern ="_[0-9]{8}\\.csv") %>%
+  str_extract("[0-9]{8}") %>% sort() %>% last()
+# Latest voivodeship update:
+voivodeships_date <- list.files(pattern ="voivodeships_[0-9]{8}\\.txt") %>%
+  str_extract("[0-9]{8}") %>% sort() %>% last()
+
+# For cleaning multiple PaBiQs (see later):
+multiple_pabiq_option <- 2
+```
+
+## Basics
+
+The summary below includes data from three studies:
+
+1. Screentime study (ca. June 2023; IDs from a local `csv`)
+2. StarWords (ongoing; IDs retrieved from the SW database)
+3. norming study (ongoing, started on 2023-09-05 with CLT database mailing action)
+
+There are two sources of data:
+
+1. CDI-Online database
+2. `csv` files downloaded from the `cdi.multilada.pl` website
+
+**The summary is based on the data downloaded from the website on**
+**`r parse_date(export_date, "%Y%m%d")`**.
+
+
+## Requirements
+
+To make it work we need:
+
+1. Warsaw Uni VPN connection (or an otherwise white-listed IP address) and
+credentials to connect to SW and CDI-Online databses.
+
+2. `Multilada` package (installed version: `r packageVersion("Multilada")`).
+To install/upgrade:
+`devtools::install_github("gkrajewski/Multilada", ref = "fm_corrections_improvements")`
+
+3. two `csv` files with consent form and PaBiQ responses.
+
+```{r data, include=FALSE}
+# Scr IDs:
+scr_ids <- pull(read_csv("scr_pl.csv", col_select = 1, col_types = "c"))
+
+# SW IDs:
+connection <- multilada_connect("sw")
+sw_ids <- RMariaDB::dbGetQuery(connection, "SELECT DISTINCT child.child_hash FROM child, `user` WHERE user.family_id = child.family_id AND user.test IS NULL")[[1]]
+RMariaDB::dbDisconnect(connection)
+
+# PABIQ data:
+pabiq_data <- fm_read(paste0("PABIQSCRPL_", export_date, ".csv"),
+                      "pabiq_labels_cdi3pl.csv", "pabiq_translations_cdi3pl.csv", "pl")
+
+# Identify valid data based on assigning IDs to one of three studies:
+pabiq_data %>% mutate(study = case_when(id %in% scr_ids ~ "screentime",
+                                         id %in% sw_ids ~ "SW",
+                                         submission_pabiq > "2023-09-04" ~ "norming")) -> pabiq_data
+pabiq_data %>% filter(! is.na(study)) -> pabiq_data
+
+# Exclude obvious test submissions:
+pabiq_data %>% filter(! str_detect(caregiver1_relation,
+                                   coll("test", ignore_case = TRUE))) -> pabiq_data
+
+# Calculate age:
+pabiq_data$age <- age_months(pabiq_data$birth_date, pabiq_data$submission_pabiq)
+
+# CDI data (processed later):
+bind_rows(
+  cdi_read("cdi", "cdi3-scr_pl"),
+  cdi_read("cdi", "cdi3_pl")) %>% filter(id %in% pabiq_data$id) -> cdi_responses
+```
+
+
+## Voivodeships
+
+"Region/voivodeship" is an open question. To correct responses
+`r paste0("voivodeships_", voivodeships_date, ".txt")` file was used.
+It's a tab delimited file with actual responses followed by TABs at each line.
+If there is anything after a TAB, it is used instead of a response.
+Otherwise it is left unchanged.
+
+In case your `voivodeships` file is older than `csv`s downoladed from the website,
+new `voivodeships` file is created, and execution/knitting is halted
+with an error message explaining what to do.
+
+```{r voivodeships, include=FALSE}
+pabiq_data$region <- str_to_title(pabiq_data$region)
+
+# Only first time, if there is no voivodeships.txt file yet:
+# write_csv(as.data.frame(sort(unique(pabiq_data$region))), "voivodeships.txt", col_names = FALSE)
+
+read_delim(paste0("voivodeships_", voivodeships_date, ".txt"), col_names = "region", delim = "\n") %>%
+  separate_wider_delim(region, "\t",
+                       names = c("region", "voivodeship"),
+                       too_few = "align_start") -> voivodeships
+if("voivodeship" %in% colnames(pabiq_data)) {
+  pabiq_data %>% select(- voivodeship) %>%
+    left_join(voivodeships) -> pabiq_data
+} else {
+  left_join(pabiq_data, voivodeships) -> pabiq_data
+}
+
+# If newer csv's downloaded:
+if(voivodeships_date < export_date) {
+  pabiq_data %>% select(region, voivodeship) %>%
+    distinct(region, .keep_all = TRUE) %>%
+    arrange(region, .locale = "pl") %>%
+    write_delim(file = paste0("voivodeships_", export_date, ".txt"),
+                delim = "\t", na = "", quote = "needed", col_names = FALSE)
+  stop(paste0("\
+              Your voivodeships_", voivodeships_date, ".txt file was outdated.\
+              Check voivodeships_", export_date, ".txt in an external editor.\
+              At the end of each line add a correction (or modify existing) or leave as is.\
+              Then execute/knit again."))
+}
+
+# Once we are happy with corrections:
+ifelse(is.na(pabiq_data$voivodeship) | pabiq_data$voivodeship == "",
+       pabiq_data$region, pabiq_data$voivodeship) -> pabiq_data$voivodeship
+```
+
+
+# Cleaning submissions
+
+There are `r nrow(pabiq_data)` PaBiQ submissions at first
+(`r length(unique(pabiq_data$id))` unique IDs).
+
+```{r pabiq_submissions}
+pabiq_data %>% group_by(study) %>% summarise(N = n()) %>% kable()
+```
+
+Not all will have a matching CDI submission but on the other hand
+often there will be more than one PaBiQ submission for a single CDI,
+especially in the norming study.
+
+CDI can be submitted only once from a given IP address but in the norming study
+**each** submission is **automatically** rewarded with a voucher,
+which may lead to a number of fake submissions and which may explain
+a number of multiple PaBiQ submissions from the same IP
+(same IP block works at the *CDI-Online* stage).
+
+## Multiple PaBiQ submissions {.tabset}
+
+Based on PaBiQ multiple submissions, we could:
+
+1. exclude all CDI submissions matching multiple PaBiQs
+2. exclude those CDI submissions, for which multiple PaBiQs
+suggest untruthfulness:
+    - too many submissions (assuming having twice twins,
+    i.e., four submissions, within our age range as maximum)
+    - inconsistent voivodeship
+    - inconsistent education
+    - impossible siblings (age difference below 10 months)
+3. exclude no CDI submissions matching multiple PaBiQs.
+
+In case of choosing option 2 or 3, for each (remaining, if option 2)
+CDI submission a PaBiQ submission based on submission time is matched.
+
+
+### Multiple PaBiQs
+
+```{r multiple_pabiqs}
+(pabiq_data %>% group_by(id) %>%
+  summarise(submissions = n()) %>%
+  filter(submissions > 1) -> multiple_pabiqs)
+```
+
+### Too many siblings
+
+```{r many_siblings}
+(pabiq_data %>% group_by(id) %>%
+  summarise(submissions = n()) %>%
+  filter(submissions > 4) -> many_siblings)
+```
+
+### Changing voivodeship
+
+```{r fake_voivodeship}
+(pabiq_data %>% group_by(id) %>%
+  reframe(n = n_distinct(voivodeship), submission_date = submission_pabiq, id = id,
+            voivodeship = voivodeship) %>% filter(n > 1) -> fake_voivodeship)
+```
+
+### Changing education
+
+Not controlling for changing submitting caregivers so far...
+
+```{r fake_education}
+(pabiq_data %>% group_by(id) %>%
+  reframe(n = n_distinct(caregiver1_ed), submission_date = submission_pabiq, id = id,
+          caregiver1_relation = caregiver1_relation, caregiver1_ed = caregiver1_ed) %>%
+  filter(n > 1) -> fake_education)
+```
+
+### Non-siblings
+
+```{r fake_siblings}
+(pabiq_data %>% group_by(id) %>%
+  reframe(age_difference = interval(min(birth_date), max(birth_date)) / months(1),
+          submission_date = submission_pabiq, id = id, birth_date = birth_date) %>%
+  filter(age_difference > 0 & age_difference < 10) -> fake_siblings)
+```
+
+
+## Multiple PaBiQ options summary {.tabset}
+
+Option 1 & 2 might be too strict excluding self-corrections.
+
+Also, taking into account consent form data
+([see here for a summary](#consent-form-submissions))
+might be useful.
+
+```{r pabiq_exclusion_counts}
+ids_option1 <- multiple_pabiqs$id
+ids_option2 <- unique(c(many_siblings$id, fake_voivodeship$id,
+                        fake_education$id, fake_siblings$id))
+```
+
+List of exclusions given option 1 or 2:
+
+### Option 1
+
+```{r pabiq_exclusions_option1}
+pabiq_data %>% filter(id %in% ids_option1) %>% group_by(id) %>%
+  reframe(submissions = n(), id = id, submission_date = submission_pabiq, birth_date = birth_date,
+          age = age, sex = sex, voivodeship = voivodeship, caregiver1_ed = caregiver1_ed)
+```
+
+Option 1 excludes `r length(ids_option1)` IDs.
+
+### Option 2
+
+```{r pabiq_exclusions_option2}
+pabiq_data %>% filter(id %in% ids_option2) %>% group_by(id) %>%
+  reframe(submissions = n(), id = id, submission_date = submission_pabiq, birth_date = birth_date,
+          age = age, sex = sex, voivodeship = voivodeship, caregiver1_ed = caregiver1_ed)
+```
+
+Option 2 excludes `r length(ids_option2)` IDs.
+
+
+## Multiple PaBiQ exclusions summary
+
+We chose **option `r multiple_pabiq_option`**
+(go to `setup` chunk to change it).
+
+```{r pabiq_exclusions}
+switch(multiple_pabiq_option,
+       ids_option1,
+       ids_option2,
+       vector("character")) -> ids_to_exclude
+
+pabiq_data %>% filter(! id %in% ids_to_exclude) -> pabiq_data
+```
+
+There are `r nrow(pabiq_data)` PaBiQ submissions left.
+After merging with CDI data PaBiQ submissions without corresponding
+CDI submissions are excluded.
+These are the remaining multiple PaBiQ submissions.
+
+```{r merge}
+cdi_submissions(cdi_responses) %>%
+  left_join(pabiq_data, by = join_by(id)) -> data
+
+# data %>% mutate(submission_pabiq = submission_pabiq - hours(2)) ->  # The two servers have time difference...
+#   data
+data %>% mutate(gap_pabiq = start_date - submission_pabiq) -> data
+(data %>% group_by(id) %>% reframe(submission_date = submission_pabiq, start_date, gap_pabiq, n = n()) %>%
+  filter(n > 1) %>% select(! n) -> multiple_pabiqs)
+
+data %>% group_by(id) %>%
+  filter(gap_pabiq > 0) %>%
+  filter(gap_pabiq == min(gap_pabiq)) -> data
+```
+
+For each CDI submission we match the PaBiQ submission that was
+closest before the CDI submission.
+We now have `r nrow(data)` submissions left.
+
+## CDI data based exclusions {.tabset}
+
+We exclude submissions if:
+
+1. there are no responses in the whole "Alternatives" section
+(extremely unlikely if filled in truthfully) or
+
+2. the filling in time is shorter than the shortest filling in time among
+StarWords participants (we assume SW participants to be truthful).
+
+
+### Empty alternatives
+
+```{r empty_alternatives}
+(empty_alternatives <- cdi_count_checkboxAlt(cdi_responses, "alternatives", answer = "none") %>%
+  mutate(empty_alt = n == 16) %>% filter(empty_alt) %>% select(id))
+# Dużo takich wypełnień, odpowiedzi w pabiqu sugerują
+# rzetelność co najmniej dwóch pierwszych (jeszcze do sprawdzenia kiedyś),
+# ale potencjalne problemy zdrowotne/rozwojowe, więc i tak można wykluczyć:
+cdi_responses %>% filter(! id %in% empty_alternatives) -> cdi_responses
+```
+
+We excluded `r nrow(empty_alternatives)` submissions based on the empty alternatives criterion.
+
+### Short time
+
+```{r short_time}
+# Filling time histogram:
+data %>% filter(duration < "1 hour") %>% ggplot() +
+  geom_histogram(aes(duration), binwidth = 30, boundary = 1) +
+  labs(x = "Duration in minutes", y = "Number of submissions") +
+  scale_x_time(breaks = breaks_width("2 min", offset = "1 min"), labels = label_time("%M"))
+
+# Możemy przyjąć jako kryterium odcięcia najkrótszy czas wypełnienia w SW:
+data %>% ungroup() %>% filter(study == "SW") %>% summarise(min(duration)) %>% pull() -> min_time
+data %>% filter(duration >= min_time) -> data
+```
+
+We excluded all submissions below `r min_time` seconds.
+
+
+# Sample summaries {.tabset}
+
+There are `r nrow(data)` submissions left after cleaning
+(all IDs unique).
+
+```{r final_submissions}
+data %>% group_by(study) %>% summarise(N = n()) %>% kable()
+```
+
+
+```{r data_processing}
+# Score calculations:
+left_join(data, cdi_count_oneCheckboxGroup(cdi_responses, "word"), by = join_by(id, end_date)) %>%
+  rename(score_lexicon = n) %>% select(-type) -> data
+left_join(data, cdi_count_checkboxAlt(cdi_responses, "alternatives"), by = join_by(id, end_date)) %>%
+  rename(score_alternatives = n) %>% select(-c(type, answer)) -> data
+left_join(data, cdi_count_radio(cdi_responses, "yesNo"),by = join_by(id, end_date)) %>%
+  rename(score_direct = n) %>% select(-c(type, answer)) -> data
+
+# Voivodeships into macroregions:
+fct_collapse(data$voivodeship,
+             "południowy" = c("Małopolskie", "Śląskie"),
+             "północno-zachodni" = c("Wielkopolskie", "Zachodniopomorskie", "Lubuskie"),
+             "południowo-zachodni" = c("Dolnośląskie", "Opolskie"),
+             "północny" = c("Kujawsko-Pomorskie", "Pomorskie", "Warmińsko-Mazurskie"),
+             "centralny" = c("Łódzkie", "Świętokrzyskie"),
+             "wschodni" = c("Lubelskie", "Podkarpackie", "Podlaskie"),
+             "mazowiecki" = "Mazowieckie",
+             other_level = "zagranica"
+) -> data$macroregion
+
+# Education levels. collapsed into three (check if "zawodowe" classified correctly):
+fct_collapse(data$caregiver1_ed,
+             "primary" = c("podstawowe", "zawodowe"),
+             "secondary" = c("średnie", "niepełne wyższe"),
+             "higher" = c("wyższe", "doktorat")
+) -> data$caregiver1_ed
+
+# Add age range check & exclude overseas submissions:
+data %>% mutate(age_range = age %in% 34:48) %>%
+  filter(macroregion != "zagranica") -> data
+```
+
+The table below shows the distribution of caregiver's education by
+city--town--village.
+
+```{r table}
+kable(table(data$caregiver1_ed, data$city_town_countryside)) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:(length(unique(data$city_town_countryside))+1),
+              width = paste0(max(nchar(data$city_town_countryside)), "em"))
+```
+
+In the tabs below you can find the same table for each macroregion and
+histograms of age by sex, caregiver's education, and city--town--village
+(also separately for each macroregion).
+
+**NOTICE:** So far tables (incl. the one above) include also children outside the age range
+(histograms fade them out).
+
+## Tables by macroregion
+
+```{r tables, results='asis'}
+data %>% group_by(macroregion) %>% group_walk(~ {
+  kable(table(.x$caregiver1_ed, .x$city_town_countryside), caption = .y$macroregion) %>%
+    column_spec(1, bold = TRUE) %>%
+    column_spec(2:(length(unique(.x$city_town_countryside))+1),
+                width = paste0(max(nchar(.x$city_town_countryside)), "em")) -> t
+  print(t)
+  cat('\n\n\n\n')
+})
+```
+
+## Age by sex
+
+```{r sex_plots}
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = sex), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  labs(x = "Age (months)", y = "Number") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Sex"))
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = sex), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  facet_wrap(vars(macroregion)) +
+  labs(x = "Age (months)", y = "Number", caption = "by macroregions") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Sex"))
+```
+
+## Age by education
+
+```{r education_plots}
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = caregiver1_ed), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  labs(x = "Age (months)", y = "Number") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Education"))
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = caregiver1_ed), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  facet_wrap(vars(macroregion)) +
+  labs(x = "Age (months)", y = "Number", caption = "by macroregions") +
+  guides(alpha = FALSE, fill = guide_legend(title = "Education"))
+```
+
+## Age by city-town-countryside
+
+```{r city_town_plots}
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = city_town_countryside), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  labs(x = "Age (months)", y = "Number") +
+  guides(alpha = FALSE, fill = guide_legend(title = ""))
+
+data %>% ggplot() +
+  geom_histogram(aes(age, alpha = age_range, fill = city_town_countryside), binwidth = 1) +
+  scale_alpha_manual(values = c(.4, .7)) +
+  facet_wrap(vars(macroregion)) +
+  labs(x = "Age (months)", y = "Number", caption = "by macroregions") +
+  guides(alpha = FALSE, fill = guide_legend(title = ""))
+```
+
+
+# Issues
+
+- Add expected norming sample counts.
+
+- Caregiver's education refers to the education of the submitter (participant),
+not necessarily the mother. Do we want to switch to mother's education
+(I wouldn't)? Do we want to control submitter's role (mother/father/etc.)?
+
+## Consent form submissions
+
+The information below might be useful for proper data filtering.
+
+<details>
+  <summary>See details</summary>
+
+<br>
+
+For each consent form submission, apart from the ID and the submission date-time,
+we have:
+
+- the actual IP
+- source of information about the study (and nursery's details if nursery)
+- time difference between submitting consent form and PaBiQ
+(in theory should be ca PaBiQ filling in time)
+- number of consent form submissions from the same IP (`attempts`)
+- whether given submission occured **after** corresponding CDI submission (`another_attempt`)
+- whether given submission was matched with corresponding CDI submission
+based on submission times (`paired`)
+
+```{r consent_form}
+# To prepare import uncomment:
+# fm_variables(paste0("IRMIK3_", export_date, ".csv"), lang = "pl", target_file = "consent_labels_cdi3pl.csv")
+
+fm_read(paste0("IRMIK3_", export_date, ".csv"),
+        "consent_labels_cdi3pl.csv", lang = "pl") %>%
+  filter(submission_consent > "2023-09-04") %>% left_join(data) %>%
+  mutate(gap_consent = submission_pabiq - submission_consent) %>%
+  group_by(id) %>% mutate(attempts = n(), another_attempt = gap_consent < 0) %>%
+  select(1:5 | last_col(2) : last_col()) -> consent_data
+consent_data %>% group_by(id) %>%
+  filter(! another_attempt) %>% mutate(paired = gap_consent == min(gap_consent)) %>%
+  right_join(consent_data, by = join_by(submission_consent, ip_address, id,
+                                        info_source, preschool, gap_consent,
+                                        attempts, another_attempt)) %>%
+  arrange(submission_consent) -> consent_data
+consent_data
+# write_csv(consent_data, paste0("consent_submissions_", export_date, ".csv"), na = "")
+```
+
+</details>
+
+<br>
+
