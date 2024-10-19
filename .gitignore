@@ -3,5 +3,5 @@
 .Rhistory
 .RData
 .Ruserdata
-*_[0-9]*.csv
+*_[0-9]*.*
 *.Rproj
