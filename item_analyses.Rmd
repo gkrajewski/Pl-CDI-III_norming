@@ -24,6 +24,7 @@ export_date <- list.files(pattern ="_[0-9]{8}\\.csv") %>%
   str_extract("[0-9]{8}") %>% sort() %>% last()
 
 # Data import:
+read_csv(paste0("submissions_", export_date, ".csv")) -> submissions
 read_csv(paste0("responses_", export_date, ".csv")) -> responses
 ```
 
