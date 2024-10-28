@@ -394,6 +394,7 @@ data %>% filter(macroregion != "zagranica") -> data
 After excluding overseas submissions there are `r nrow(data)` submissions left.
 
 ```{r final_submissions}
+cdi_responses %>% filter(id %in% data$id) %>% write_csv(paste0("responses_", export_date, ".csv"))
 data %>% group_by(study) %>% summarise(N = n()) %>% kable()
 ```
 

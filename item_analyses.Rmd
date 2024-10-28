@@ -1,0 +1,29 @@
+---
+title: "Pl-CDI-III Norming Study"
+subtitle: "Item-level Analysis"
+author: "Grzegorz Krajewski"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+#    toc: true
+#    toc_float: true
+#    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+# Packages:
+library(tidyverse)
+library(Multilada)
+
+# knitr chunk defaults:
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+
+# Latest website download:
+export_date <- list.files(pattern ="_[0-9]{8}\\.csv") %>%
+  str_extract("[0-9]{8}") %>% sort() %>% last()
+
+# Data import:
+read_csv(paste0("responses_", export_date, ".csv")) -> responses
+```
+
