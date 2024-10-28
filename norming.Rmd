@@ -351,14 +351,6 @@ We excluded all submissions below `r min_time` seconds.
 
 # Sample summaries {.tabset}
 
-There are `r nrow(data)` submissions left after cleaning
-(all IDs unique).
-
-```{r final_submissions}
-data %>% group_by(study) %>% summarise(N = n()) %>% kable()
-```
-
-
 ```{r data_processing}
 # Score calculations:
 left_join(data, cdi_count_oneCheckboxGroup(cdi_responses, "word"), by = join_by(id, end_date)) %>%
@@ -388,9 +380,23 @@ fct_collapse(data$caregiver1_ed,
 ) -> data$caregiver1_ed
 
 # Add age range check & exclude overseas submissions:
-data %>% mutate(age_range = age %in% 34:48) %>%
-  filter(macroregion != "zagranica") -> data
+data %>% mutate(age_range = age %in% 34:48) -> data
 ```
+
+There are `r nrow(data)` submissions left after cleaning
+(all IDs unique).
+
+```{r overseas_exclusions}
+# Comment out or eval=F, if not needed:
+data %>% filter(macroregion != "zagranica") -> data
+```
+
+After excluding overseas submissions there are `r nrow(data)` submissions left.
+
+```{r final_submissions}
+data %>% group_by(study) %>% summarise(N = n()) %>% kable()
+```
+
 
 The table below shows the distribution of caregiver's education by
 city--town--village.
