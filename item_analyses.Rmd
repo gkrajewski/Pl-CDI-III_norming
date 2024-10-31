@@ -28,3 +28,41 @@ read_csv(paste0("submissions_", export_date, ".csv")) -> submissions
 read_csv(paste0("responses_", export_date, ".csv")) -> responses
 ```
 
+
+```{r itemise}
+read_csv2("items.csv") -> items
+
+# Lexicon:
+
+cdi_itemise_oneCheckboxGroup(responses, "word", items) -> lex_responses
+# Add IDs with no items checked, not included in the above output:
+submissions %>% filter(! id %in% lex_responses$id) %>% select(id, end_date) %>%
+  group_by(id, end_date) %>% group_modify(~ {
+    items %>% filter(type == "word") %>% group_by(category) %>% mutate(item_id = row_number()) %>%
+      add_column(response = 0, id = .x$id, end_date = .x$end_date)
+  }) %>% bind_rows(lex_responses) -> lex_responses
+
+
+# Alternatives:
+
+cdi_itemise_checkboxAlt(responses, "alternatives", items) %>%
+  rename(response = "answer2") %>%
+  select(-answer1) -> alt_responses
+# One submission (MZ4ff15UPqUXBdp5Fm6ek) without any alternatives saved... (check similar case in the pilot).
+# Add MZ4ff15UPqUXBdp5Fm6ek, not included in the above output:
+submissions %>% filter(! id %in% alt_responses$id) %>% select(id, end_date) %>%
+  group_by(id, end_date) %>% group_modify(~ {
+    items %>% filter(type == "alternatives") %>% group_by(category) %>% mutate(item_id = row_number()) %>%
+      add_column(response = 0, id = .x$id, end_date = .x$end_date)
+  }) %>% bind_rows(alt_responses) -> alt_responses
+
+
+# Direct questions:
+
+cdi_itemise_radio(responses, "yesNo", items) %>%
+  rename(response = "answer") %>%
+  mutate(response = if_else(response == 1, 1, 0)) -> direct_responses
+
+```
+
+
