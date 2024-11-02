@@ -29,9 +29,22 @@ read_csv(paste0("responses_", export_date, ".csv")) -> responses
 ```
 
 
-```{r itemise}
+```{r construction_types}
 read_csv2("items.csv") -> items
+items %>%
+  mutate(q_main = gsub("[^[:alpha:]]", "", definition)) -> items # to avoid „ vs " etc. mismatches
 
+read_csv("structures_all.csv") %>%
+  select(! starts_with("typ")) %>% distinct() %>% # keep English & avoid complex-relative vs względne mismatch
+  mutate(q2 = str_replace_na(q2, "")) %>%
+  mutate(q_main = paste(q1, q2)) %>%
+  mutate(q_main = gsub("[^[:alpha:]]", "", q_main)) %>% # to avoid „ vs " etc. mismatches
+  right_join(items) %>%
+  select(! starts_with("q") & ! "alternatywa") -> items
+```
+
+
+```{r itemise}
 # Lexicon:
 
 cdi_itemise_oneCheckboxGroup(responses, "word", items) -> lex_responses
