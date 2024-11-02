@@ -79,3 +79,15 @@ cdi_itemise_radio(responses, "yesNo", items) %>%
 ```
 
 
+## Grammar items difficulties by age
+
+We bind together complexity alternatives and direct questions
+and we calculate difficulties by age.
+
+```{r diff_grammar_age}
+bind_rows(alt_responses, direct_responses) %>%
+  right_join(submissions[submissions$age_range,]) %>%
+  group_by(definition, construction, age) %>% summarise(difficulty = mean(response)) -> diff_gram
+```
+
+
