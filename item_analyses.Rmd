@@ -15,6 +15,7 @@ output:
 # Packages:
 library(tidyverse)
 library(Multilada)
+library(ggpubr) # for many plots
 
 # knitr chunk defaults:
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
@@ -86,8 +87,27 @@ and we calculate difficulties by age.
 
 ```{r diff_grammar_age}
 bind_rows(alt_responses, direct_responses) %>%
-  right_join(submissions[submissions$age_range,]) %>%
+  right_join(submissions[submissions$age_range,]) -> gram_responses
+(
+gram_responses %>%
   group_by(definition, construction, age) %>% summarise(difficulty = mean(response)) -> diff_gram
+)
+submissions %>% filter(age_range) %>% group_by(age) %>% summarise(N = n())
 ```
 
+
+Below are barplots of difficulty by age with binomial smoothing.
+
+```{r diff_grammar_age_plot}
+gram_responses %>% group_by(definition) %>%
+      group_map(~ {
+        ggplot(.x) +
+          aes(age, response) +
+          stat_summary(fun = "mean", geom = "bar") +
+          geom_smooth(method = "glm", method.args=list(family="binomial")) +
+          labs(x = "Age (months)", y = "Checked", title = .y) +
+          ylim(0, 1)
+      }) -> gram_diff_plots
+ggarrange(plotlist = gram_diff_plots, nrow = 4, ncol = 6)
+```
 
