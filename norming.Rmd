@@ -69,6 +69,8 @@ To install/upgrade:
 
 3. two `csv` files with consent form and PaBiQ responses.
 
+3. `scr_pl.csv` with Screentime study IDs.
+
 ```{r data, include=FALSE}
 # Scr IDs:
 scr_ids <- pull(read_csv("scr_pl.csv", col_select = 1, col_types = "c"))
