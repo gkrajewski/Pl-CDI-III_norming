@@ -111,3 +111,15 @@ gram_responses %>% group_by(definition) %>%
 ggarrange(plotlist = gram_diff_plots, nrow = 4, ncol = 6)
 ```
 
+
+```{r diff_grammar_age_stats}
+gram_responses %>% group_by(definition) %>%
+        group_modify(~ {
+                glm(response ~ age, family = binomial, .x) -> item_model
+                summary(item_model)$coefficients["age", ] -> age_estimation
+                cbind(data.frame(age_deviance = item_model$deviance, age_aic = item_model$aic),
+                      age_coefficient = age_estimation[1], age_pvalue = age_estimation[4])
+        }) -> gram_item_age
+```
+
+
