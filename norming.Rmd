@@ -374,6 +374,9 @@ fct_collapse(data$voivodeship,
              other_level = "zagranica"
 ) -> data$macroregion
 
+# Keep voivodeships (but leave "macroregion" throughout the report):
+# data$macroregion <- if_else(data$macroregion == "zagranica", "zagranica", data$voivodeship)
+
 # Education levels. collapsed into three (check if "zawodowe" classified correctly):
 fct_collapse(data$caregiver1_ed,
              "primary" = c("podstawowe", "zawodowe"),
@@ -383,6 +386,9 @@ fct_collapse(data$caregiver1_ed,
 
 # Add age range check & exclude overseas submissions:
 data %>% mutate(age_range = age %in% 34:48) -> data
+
+# Exclude outside age range:
+data %>% filter(age_range) -> data
 ```
 
 There are `r nrow(data)` submissions left after cleaning
