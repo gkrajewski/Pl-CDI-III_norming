@@ -123,3 +123,16 @@ gram_responses %>% group_by(definition) %>%
 ```
 
 
+```{r diff_grammar_age_predicted}
+gram_responses %>% group_by(definition) %>%
+        group_modify(~ {
+                glm(response ~ age, family = binomial, .x) -> item_model
+                data.frame(t(predict(item_model,
+                                     data.frame(age=min(.x$age) : max(.x$age)),
+                                     type = "response"))) -> pred
+                colnames(pred) <- paste("m", min(.x$age) : max(.x$age), sep = "_")
+                pred
+        }) -> gram_item_age_predicted
+```
+
+
