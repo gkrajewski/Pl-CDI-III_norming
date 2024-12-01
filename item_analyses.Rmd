@@ -49,6 +49,9 @@ items %>% mutate(gram_label = paste(construction,
           mutate(gram_label = str_replace_all(gram_label, " *NA", "")) %>%
           mutate(gram_label = if_else(gram_label == "", NA, gram_label)) %>%
           mutate(gram_label = str_replace(gram_label, " (.+)", " „\\1”")) -> items
+
+# label <- "gram_label"
+label <- "definition"
 ```
 
 
@@ -83,7 +86,6 @@ submissions %>% filter(! id %in% alt_responses$id) %>% select(id, end_date) %>%
 cdi_itemise_radio(responses, "yesNo", items) %>%
   rename(response = "answer") %>%
   mutate(response = if_else(response == 1, 1, 0)) -> direct_responses
-
 ```
 
 
@@ -97,7 +99,7 @@ bind_rows(alt_responses, direct_responses) %>%
   right_join(submissions[submissions$age_range,]) -> gram_responses
 (
 gram_responses %>%
-  group_by(definition, construction, age) %>% summarise(difficulty = mean(response)) -> diff_gram
+  group_by(.data[[label]], construction, age) %>% summarise(difficulty = mean(response)) -> diff_gram
 )
 submissions %>% filter(age_range) %>% group_by(age) %>% summarise(N = n())
 ```
@@ -120,18 +122,20 @@ ggarrange(plotlist = gram_diff_plots, nrow = 4, ncol = 6)
 
 
 ```{r diff_grammar_age_stats}
-gram_responses %>% group_by(definition) %>%
+gram_responses %>% group_by(.data[[label]]) %>%
         group_modify(~ {
                 glm(response ~ age, family = binomial, .x) -> item_model
                 summary(item_model)$coefficients["age", ] -> age_estimation
                 cbind(data.frame(age_deviance = item_model$deviance, age_aic = item_model$aic),
                       age_coefficient = age_estimation[1], age_pvalue = age_estimation[4])
         }) -> gram_item_age
+colnames(gram_item_age)[1] <- label
+gram_item_age
 ```
 
 
 ```{r diff_grammar_age_predicted}
-gram_responses %>% group_by(definition) %>%
+gram_responses %>% group_by(.data[[label]]) %>%
         group_modify(~ {
                 glm(response ~ age, family = binomial, .x) -> item_model
                 data.frame(t(predict(item_model,
@@ -140,6 +144,8 @@ gram_responses %>% group_by(definition) %>%
                 colnames(pred) <- paste("m", min(.x$age) : max(.x$age), sep = "_")
                 pred
         }) -> gram_item_age_predicted
+colnames(gram_item_age_predicted)[1] <- label
+gram_item_age_predicted
 ```
 
 
