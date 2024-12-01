@@ -108,16 +108,25 @@ submissions %>% filter(age_range) %>% group_by(age) %>% summarise(N = n())
 Below are barplots of difficulty by age with binomial smoothing.
 
 ```{r diff_grammar_age_plot}
-gram_responses %>% group_by(definition) %>%
-      group_map(~ {
-        ggplot(.x) +
-          aes(age, response) +
-          stat_summary(fun = "mean", geom = "bar") +
-          geom_smooth(method = "glm", method.args=list(family="binomial")) +
-          labs(x = "Age (months)", y = "Checked", title = .y) +
-          ylim(0, 1)
-      }) -> gram_diff_plots
-ggarrange(plotlist = gram_diff_plots, nrow = 4, ncol = 6)
+# gram_responses %>% group_by(.data[[label]]) %>%
+#       group_map(~ {
+#         ggplot(.x) +
+#           aes(age, response) +
+#           stat_summary(fun = "mean", geom = "bar") +
+#           geom_smooth(method = "glm", formula="y~x", method.args=list(family="binomial")) +
+#           labs(x = "Age (months)", y = "Checked", title = .y) +
+#           theme(plot.title = element_text(size = 6)) +
+#           ylim(0, 1)
+#       }) -> gram_diff_plots
+# ggarrange(plotlist = gram_diff_plots, nrow = 4, ncol = 6)
+
+gram_responses %>% ggplot(aes(age, response)) +
+  stat_summary(fun = "mean", geom = "bar") +
+  geom_smooth(method = "glm", formula="y~x", method.args=list(family="binomial")) +
+  labs(x = "Age (months)", y = "Checked") +
+  ylim(0, 1) +
+  facet_wrap(as.formula(paste("~", label))) +
+  theme(strip.text = element_text(size = 6)) 
 ```
 
 
