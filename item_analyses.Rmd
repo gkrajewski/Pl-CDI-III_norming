@@ -160,3 +160,41 @@ gram_item_age_predicted
 ```
 
 
+## Selecting for WS-Grammar pilot
+
+For matching & merging with the pilot items make sure `label` is set to `"definition"`
+(it's `"`r label`"` now). Change and rerun if needed.
+
+```{r ws_selection_prep}
+if(label != "definition") knitr::knit_exit()
+thres <- .6
+m <- 34
+```
+
+Grammar items that had predicted difficulty at the age of `r m` months
+above `r thres` (as checked on data from Oct 15th 2024):
+
+```{r ws_selection}
+(gram_item_age_predicted %>% filter(.data[[paste0("m_", m)]] > thres) %>%
+  pull(.data[[label]]) %>% sort() -> selected)
+items %>% filter(.data[[label]] %in% selected) -> selected_items
+# gram_responses %>% filter(.data[[label]] %in% selected) -> gram_responses
+# gram_item_age_predicted %>% filter(m_34 > .6) %>% pull(gram_label) %>% sort()
+```
+
+
+```{r ws_selection_merging}
+read.csv2("items_ws.csv") %>% filter(type != "sentences" |
+                                     definition %in% selected_items$definition) -> ws_items
+colnames(ws_items) -> ws_columns
+
+selected_items %>% select(definition, gram_label, construction) %>%
+  rename(label = "gram_label") %>% right_join(ws_items) %>%
+  mutate(gram_label = if_else(is.na(label), gram_label, label),
+         gram_category = if_else(is.na(construction), gram_category, construction)) %>%
+  select(- label, - construction) %>% select(ws_columns) %>%
+  arrange(item_id) %>% write.csv2("items_ws_new.csv", na="", quote=F, row.names=F)
+```
+
+
+
